@@ -1,0 +1,111 @@
+"use client";
+
+import { useState } from "react";
+import { toast } from "sonner";
+import { Loader2, Mail, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent } from "@/components/ui/card";
+
+export function ContactSection() {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [message, setMessage] = useState("");
+  const [company, setCompany] = useState(""); // honeypot
+  const [submitting, setSubmitting] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setSubmitting(true);
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, phone: phone || undefined, message, company }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toast.error(data.error ?? "A apărut o eroare. Încearcă din nou.");
+        return;
+      }
+
+      toast.success("Mesajul a fost trimis! Îți răspundem cât mai curând.");
+      setName("");
+      setEmail("");
+      setPhone("");
+      setMessage("");
+    } catch {
+      toast.error("A apărut o eroare de rețea. Încearcă din nou.");
+    } finally {
+      setSubmitting(false);
+    }
+  }
+
+  return (
+    <section id="contact" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
+      <div className="grid gap-10 lg:grid-cols-2">
+        <div>
+          <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Contact</h2>
+          <p className="mt-3 max-w-md text-muted-foreground">
+            Ai întrebări despre casă, acces sau facilități? Scrie-ne și îți
+            răspundem cât mai curând.
+          </p>
+
+          <ul className="mt-6 space-y-3 text-sm">
+            <li className="flex items-center gap-2">
+              <Phone className="size-4 text-primary" aria-hidden />
+              <a href="tel:+40700000000" className="hover:underline">+40 700 000 000</a>
+            </li>
+            <li className="flex items-center gap-2">
+              <Mail className="size-4 text-primary" aria-hidden />
+              <a href="mailto:contact@laograda.ro" className="hover:underline">contact@laograda.ro</a>
+            </li>
+          </ul>
+        </div>
+
+        <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="grid gap-1.5">
+                  <Label htmlFor="contact-name">Nume</Label>
+                  <Input id="contact-name" required value={name} onChange={(e) => setName(e.target.value)} />
+                </div>
+                <div className="grid gap-1.5">
+                  <Label htmlFor="contact-phone">Telefon (opțional)</Label>
+                  <Input id="contact-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
+                </div>
+              </div>
+
+              <div className="grid gap-1.5">
+                <Label htmlFor="contact-email">Email</Label>
+                <Input id="contact-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
+              </div>
+
+              <div className="grid gap-1.5">
+                <Label htmlFor="contact-message">Mesaj</Label>
+                <Textarea id="contact-message" required rows={4} value={message} onChange={(e) => setMessage(e.target.value)} />
+              </div>
+
+              <div className="hidden" aria-hidden="true">
+                <Label htmlFor="contact-company">Companie</Label>
+                <Input id="contact-company" tabIndex={-1} autoComplete="off" value={company} onChange={(e) => setCompany(e.target.value)} />
+              </div>
+
+              <Button type="submit" disabled={submitting} className="mt-2">
+                {submitting && <Loader2 className="size-4 animate-spin" aria-hidden />}
+                Trimite mesajul
+              </Button>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    </section>
+  );
+}
