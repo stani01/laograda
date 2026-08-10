@@ -51,6 +51,10 @@ create table if not exists public.site_settings (
   maps_url text not null default 'https://maps.app.goo.gl/supPC8QDwQRM7Dns8',
   phone text not null default '+40 700 000 000',
   email text not null default 'contact@laograda.ro',
+  instagram_url text not null default 'https://www.instagram.com/laograda/',
+  facebook_url text not null default 'https://www.facebook.com/p/LaOgrada-100071189138778/',
+  airbnb_url text not null default 'https://www.airbnb.com/rooms/44671053',
+  booking_url text not null default 'https://www.booking.com/hotel/ro/laograda.ro.html',
   price_normal numeric(10, 2) not null default 350,
   price_normal_label text not null default 'Sezon normal',
   price_normal_features text not null default '2 nopți minim
@@ -74,6 +78,10 @@ insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 
 -- If the table already existed before these columns were added, backfill them:
 alter table public.site_settings add column if not exists maps_url text not null default 'https://maps.app.goo.gl/supPC8QDwQRM7Dns8';
+alter table public.site_settings add column if not exists instagram_url text not null default 'https://www.instagram.com/laograda/';
+alter table public.site_settings add column if not exists facebook_url text not null default 'https://www.facebook.com/p/LaOgrada-100071189138778/';
+alter table public.site_settings add column if not exists airbnb_url text not null default 'https://www.airbnb.com/rooms/44671053';
+alter table public.site_settings add column if not exists booking_url text not null default 'https://www.booking.com/hotel/ro/laograda.ro.html';
 alter table public.site_settings add column if not exists price_normal_label text not null default 'Sezon normal';
 alter table public.site_settings add column if not exists price_normal_features text not null default '2 nopți minim
 Curent, apă, Wi-Fi incluse

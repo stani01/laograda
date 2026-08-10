@@ -1,5 +1,4 @@
-import Link from "next/link";
-import { Mountain, Mail, Phone, MapPin } from "lucide-react";
+import { Mountain, Mail, Phone, MapPin, Instagram, Facebook, Globe, Bookmark } from "lucide-react";
 import type { SiteSettings } from "@/lib/site-content";
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
@@ -47,18 +46,47 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
 
         <div className="text-sm">
           <h3 className="mb-3 font-heading font-semibold">Găsește-ne și pe</h3>
-          <ul className="space-y-2 text-muted-foreground">
-            <li>
-              <Link href="#rezervare" className="hover:text-foreground">
-                Booking.com
-              </Link>
-            </li>
-            <li>
-              <Link href="#rezervare" className="hover:text-foreground">
-                Airbnb
-              </Link>
-            </li>
-          </ul>
+          <div className="flex items-center gap-3">
+            <a
+              href={settings.instagramUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:bg-primary hover:text-white"
+            >
+              <Instagram className="size-5" aria-hidden />
+              <span className="sr-only">Instagram</span>
+            </a>
+
+            <a
+              href={settings.facebookUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:bg-primary hover:text-white"
+            >
+              <Facebook className="size-5" aria-hidden />
+              <span className="sr-only">Facebook</span>
+            </a>
+
+            <a
+              href={settings.airbnbUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:bg-primary hover:text-white"
+            >
+              <Globe className="size-5" aria-hidden />
+              <span className="sr-only">Airbnb</span>
+            </a>
+
+            <a
+              href={settings.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:bg-primary hover:text-white"
+            >
+              <Bookmark className="size-5" aria-hidden />
+              <span className="sr-only">Booking.com</span>
+            </a>
+          </div>
         </div>
       </div>
 

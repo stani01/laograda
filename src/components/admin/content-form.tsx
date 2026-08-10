@@ -135,6 +135,46 @@ export function ContentForm({
               />
             </div>
           </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-1.5">
+              <Label htmlFor="instagramUrl">Instagram</Label>
+              <Input
+                id="instagramUrl"
+                type="url"
+                value={settings.instagramUrl}
+                onChange={(e) => setSettings((s) => ({ ...s, instagramUrl: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="facebookUrl">Facebook</Label>
+              <Input
+                id="facebookUrl"
+                type="url"
+                value={settings.facebookUrl}
+                onChange={(e) => setSettings((s) => ({ ...s, facebookUrl: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-1.5">
+              <Label htmlFor="airbnbUrl">Airbnb</Label>
+              <Input
+                id="airbnbUrl"
+                type="url"
+                value={settings.airbnbUrl}
+                onChange={(e) => setSettings((s) => ({ ...s, airbnbUrl: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="bookingUrl">Booking.com</Label>
+              <Input
+                id="bookingUrl"
+                type="url"
+                value={settings.bookingUrl}
+                onChange={(e) => setSettings((s) => ({ ...s, bookingUrl: e.target.value }))}
+              />
+            </div>
+          </div>
         </CardContent>
       </Card>
 

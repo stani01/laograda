@@ -8,6 +8,10 @@ export interface SiteSettings {
   mapsUrl: string;
   phone: string;
   email: string;
+  instagramUrl: string;
+  facebookUrl: string;
+  airbnbUrl: string;
+  bookingUrl: string;
   priceNormal: number;
   priceNormalLabel: string;
   priceNormalFeatures: string;
@@ -50,6 +54,10 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   mapsUrl: "https://maps.app.goo.gl/supPC8QDwQRM7Dns8",
   phone: "+40 700 000 000",
   email: "contact@laograda.ro",
+  instagramUrl: "https://www.instagram.com/laograda/",
+  facebookUrl: "https://www.facebook.com/p/LaOgrada-100071189138778/",
+  airbnbUrl: "https://www.airbnb.com/rooms/44671053",
+  bookingUrl: "https://www.booking.com/hotel/ro/laograda.ro.html",
   priceNormal: 350,
   priceNormalLabel: "Sezon normal",
   priceNormalFeatures:
@@ -102,6 +110,10 @@ export async function getSiteContent(): Promise<SiteContent> {
           mapsUrl: settingsRes.data.maps_url ?? DEFAULT_SETTINGS.mapsUrl,
           phone: settingsRes.data.phone ?? DEFAULT_SETTINGS.phone,
           email: settingsRes.data.email ?? DEFAULT_SETTINGS.email,
+          instagramUrl: settingsRes.data.instagram_url ?? DEFAULT_SETTINGS.instagramUrl,
+          facebookUrl: settingsRes.data.facebook_url ?? DEFAULT_SETTINGS.facebookUrl,
+          airbnbUrl: settingsRes.data.airbnb_url ?? DEFAULT_SETTINGS.airbnbUrl,
+          bookingUrl: settingsRes.data.booking_url ?? DEFAULT_SETTINGS.bookingUrl,
           priceNormal: Number(settingsRes.data.price_normal ?? DEFAULT_SETTINGS.priceNormal),
           priceNormalLabel: settingsRes.data.price_normal_label ?? DEFAULT_SETTINGS.priceNormalLabel,
           priceNormalFeatures:
