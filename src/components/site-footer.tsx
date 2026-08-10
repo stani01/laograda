@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { TreePine, Mail, Phone, MapPin } from "lucide-react";
+import { Mountain, Mail, Phone, MapPin } from "lucide-react";
 import type { SiteSettings } from "@/lib/site-content";
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
@@ -10,7 +10,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
           <div className="flex items-center gap-2 font-script text-2xl">
-            <TreePine className="size-5 text-primary" aria-hidden />
+            <Mountain className="size-5 text-primary" aria-hidden />
             La Ograda
           </div>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">{settings.aboutText}</p>
