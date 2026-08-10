@@ -96,21 +96,25 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     const settings: SiteSettings = settingsRes.data
       ? {
-          heroSubtitle: settingsRes.data.hero_subtitle,
-          aboutText: settingsRes.data.about_text,
-          address: settingsRes.data.address,
-          mapsUrl: settingsRes.data.maps_url,
-          phone: settingsRes.data.phone,
-          email: settingsRes.data.email,
-          priceNormal: Number(settingsRes.data.price_normal),
-          priceNormalLabel: settingsRes.data.price_normal_label,
-          priceNormalFeatures: settingsRes.data.price_normal_features,
-          priceWeekend: Number(settingsRes.data.price_weekend),
-          priceWeekendLabel: settingsRes.data.price_weekend_label,
-          priceWeekendFeatures: settingsRes.data.price_weekend_features,
-          priceLongStay: Number(settingsRes.data.price_long_stay),
-          priceLongStayLabel: settingsRes.data.price_long_stay_label,
-          priceLongStayFeatures: settingsRes.data.price_long_stay_features,
+          heroSubtitle: settingsRes.data.hero_subtitle ?? DEFAULT_SETTINGS.heroSubtitle,
+          aboutText: settingsRes.data.about_text ?? DEFAULT_SETTINGS.aboutText,
+          address: settingsRes.data.address ?? DEFAULT_SETTINGS.address,
+          mapsUrl: settingsRes.data.maps_url ?? DEFAULT_SETTINGS.mapsUrl,
+          phone: settingsRes.data.phone ?? DEFAULT_SETTINGS.phone,
+          email: settingsRes.data.email ?? DEFAULT_SETTINGS.email,
+          priceNormal: Number(settingsRes.data.price_normal ?? DEFAULT_SETTINGS.priceNormal),
+          priceNormalLabel: settingsRes.data.price_normal_label ?? DEFAULT_SETTINGS.priceNormalLabel,
+          priceNormalFeatures:
+            settingsRes.data.price_normal_features ?? DEFAULT_SETTINGS.priceNormalFeatures,
+          priceWeekend: Number(settingsRes.data.price_weekend ?? DEFAULT_SETTINGS.priceWeekend),
+          priceWeekendLabel: settingsRes.data.price_weekend_label ?? DEFAULT_SETTINGS.priceWeekendLabel,
+          priceWeekendFeatures:
+            settingsRes.data.price_weekend_features ?? DEFAULT_SETTINGS.priceWeekendFeatures,
+          priceLongStay: Number(settingsRes.data.price_long_stay ?? DEFAULT_SETTINGS.priceLongStay),
+          priceLongStayLabel:
+            settingsRes.data.price_long_stay_label ?? DEFAULT_SETTINGS.priceLongStayLabel,
+          priceLongStayFeatures:
+            settingsRes.data.price_long_stay_features ?? DEFAULT_SETTINGS.priceLongStayFeatures,
         }
       : DEFAULT_SETTINGS;
 

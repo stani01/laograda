@@ -6,6 +6,10 @@ import { PricingSection } from "@/components/sections/pricing-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { getSiteContent } from "@/lib/site-content";
 
+// Re-fetch admin-edited content at most once a minute, so changes made in
+// /admin show up on the live site without needing a new deploy.
+export const revalidate = 60;
+
 export default async function Home() {
   const { settings, amenities, gallery } = await getSiteContent();
 
