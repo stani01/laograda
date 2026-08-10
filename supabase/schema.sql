@@ -91,15 +91,20 @@ insert into storage.buckets (id, name, public)
 values ('gallery', 'gallery', true)
 on conflict (id) do nothing;
 
+-- `drop ... if exists` first makes this script safe to re-run from scratch
+-- (Postgres has no `create policy if not exists`).
+drop policy if exists "Public read access for gallery photos" on storage.objects;
 create policy "Public read access for gallery photos"
 on storage.objects for select
 using (bucket_id = 'gallery');
 
+drop policy if exists "Authenticated users can upload gallery photos" on storage.objects;
 create policy "Authenticated users can upload gallery photos"
 on storage.objects for insert
 to authenticated
 with check (bucket_id = 'gallery');
 
+drop policy if exists "Authenticated users can delete gallery photos" on storage.objects;
 create policy "Authenticated users can delete gallery photos"
 on storage.objects for delete
 to authenticated
