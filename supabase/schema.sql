@@ -47,7 +47,8 @@ create table if not exists public.site_settings (
   id integer primary key default 1,
   hero_subtitle text not null default 'Casă de vacanță la poalele Munților Făgăraș, cu vedere superbă la munte, curte generoasă și râu în apropiere.',
   about_text text not null default 'O casă de vacanță primitoare la poalele Munților Făgăraș — locul perfect pentru o evadare din oraș, weekenduri liniștite și vacanțe în familie.',
-  address text not null default 'Avrig, Județul Sibiu',
+  address text not null default 'Valea Avrigului, Județul Sibiu',
+  maps_url text not null default 'https://maps.app.goo.gl/supPC8QDwQRM7Dns8',
   phone text not null default '+40 700 000 000',
   email text not null default 'contact@laograda.ro',
   price_normal numeric(10, 2) not null default 350,
@@ -58,6 +59,9 @@ create table if not exists public.site_settings (
 );
 
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
+
+-- If the table already existed before this column was added, backfill it:
+alter table public.site_settings add column if not exists maps_url text not null default 'https://maps.app.goo.gl/supPC8QDwQRM7Dns8';
 
 -- `icon` is a key into the fixed icon registry in src/lib/amenity-icons.ts,
 -- not a free-form value, so the admin panel can render a matching lucide icon.

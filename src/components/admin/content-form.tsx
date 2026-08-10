@@ -96,7 +96,7 @@ export function ContentForm({
               onChange={(e) => setSettings((s) => ({ ...s, aboutText: e.target.value }))}
             />
           </div>
-          <div className="grid gap-4 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
               <Label htmlFor="address">Locație</Label>
               <Input
@@ -105,6 +105,18 @@ export function ContentForm({
                 onChange={(e) => setSettings((s) => ({ ...s, address: e.target.value }))}
               />
             </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="mapsUrl">Link Google Maps</Label>
+              <Input
+                id="mapsUrl"
+                type="url"
+                placeholder="https://maps.app.goo.gl/..."
+                value={settings.mapsUrl}
+                onChange={(e) => setSettings((s) => ({ ...s, mapsUrl: e.target.value }))}
+              />
+            </div>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
               <Label htmlFor="phone">Telefon</Label>
               <Input

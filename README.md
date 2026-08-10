@@ -78,7 +78,13 @@ supabase/schema.sql          — schema (bookings, site_settings, amenities, gal
 
    - **Supabase**: creează un proiect, rulează [supabase/schema.sql](supabase/schema.sql)
      în SQL Editor, apoi copiază URL-ul și cheile din Project Settings → API.
-   - **Resend**: generează o cheie API și un domeniu/adresă de expediere.
+   - **Resend** (trimitere email-uri): generează o cheie API în `RESEND_API_KEY`.
+     `CONTACT_EMAIL_TO` e adresa unde ajung notificările (cereri de rezervare +
+     mesaje de contact) — poate fi orice email funcțional (Gmail etc.), nu
+     trebuie să fie neapărat `@laograda.ro`. Pentru a trimite chiar din
+     `@laograda.ro` (`EMAIL_FROM`), după ce cumpărați domeniul trebuie să-l
+     verificați în Resend (Domains → Add Domain → adăugați înregistrările DNS
+     cerute); până atunci rămâne pe adresa implicită `onboarding@resend.dev`.
    - **Booking.com / Airbnb**: din contul de gazdă, exportă link-ul iCal al
      calendarului (Booking: Extranet → Calendar → Sync calendars → Export;
      Airbnb: Calendar → Availability settings → Connect to another website).

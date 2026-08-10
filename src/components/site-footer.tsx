@@ -33,7 +33,14 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="size-4 shrink-0" aria-hidden />
-              <span>{settings.address}</span>
+              <a
+                href={settings.mapsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-foreground hover:underline"
+              >
+                {settings.address}
+              </a>
             </li>
           </ul>
         </div>

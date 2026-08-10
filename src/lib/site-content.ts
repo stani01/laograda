@@ -5,6 +5,7 @@ export interface SiteSettings {
   heroSubtitle: string;
   aboutText: string;
   address: string;
+  mapsUrl: string;
   phone: string;
   email: string;
   priceNormal: number;
@@ -40,6 +41,7 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   aboutText:
     "O casă de vacanță primitoare la poalele Munților Făgăraș — locul perfect pentru o evadare din oraș, weekenduri liniștite și vacanțe în familie.",
   address: "Valea Avrigului, Județul Sibiu",
+  mapsUrl: "https://maps.app.goo.gl/supPC8QDwQRM7Dns8",
   phone: "+40 700 000 000",
   email: "contact@laograda.ro",
   priceNormal: 350,
@@ -82,6 +84,7 @@ export async function getSiteContent(): Promise<SiteContent> {
           heroSubtitle: settingsRes.data.hero_subtitle,
           aboutText: settingsRes.data.about_text,
           address: settingsRes.data.address,
+          mapsUrl: settingsRes.data.maps_url,
           phone: settingsRes.data.phone,
           email: settingsRes.data.email,
           priceNormal: Number(settingsRes.data.price_normal),
