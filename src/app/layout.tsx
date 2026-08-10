@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display, Caveat } from "next/font/google";
+import { Geist, Geist_Mono, Playfair_Display } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
 
@@ -18,10 +19,12 @@ const playfairDisplay = Playfair_Display({
   subsets: ["latin"],
 });
 
-const caveat = Caveat({
-  variable: "--font-caveat",
-  subsets: ["latin"],
-  weight: ["700"],
+// Self-hosted (not on Google Fonts) — open source, SIL OFL/MIT licensed.
+// See src/fonts/Gidolinya-License.txt.
+const gidolinya = localFont({
+  src: "../fonts/Gidolinya-Regular.otf",
+  variable: "--font-gidolinya",
+  display: "swap",
 });
 
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
@@ -47,7 +50,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="ro"
-      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${caveat.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplay.variable} ${gidolinya.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
         {children}
