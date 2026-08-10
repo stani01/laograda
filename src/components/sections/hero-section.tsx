@@ -1,15 +1,25 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { CalendarCheck, MapPin } from "lucide-react";
-import type { SiteSettings } from "@/lib/site-content";
+import type { SiteSettings, GalleryImage } from "@/lib/site-content";
+import { HeroSlideshow } from "@/components/sections/hero-slideshow";
 
-export function HeroSection({ settings }: { settings: SiteSettings }) {
+export function HeroSection({
+  settings,
+  images,
+}: {
+  settings: SiteSettings;
+  images: GalleryImage[];
+}) {
   return (
     <section
       id="top"
       className="relative flex min-h-[85vh] items-center overflow-hidden bg-[radial-gradient(circle_at_20%_20%,color-mix(in_oklch,var(--primary),transparent_80%),transparent_60%),radial-gradient(circle_at_80%_0%,color-mix(in_oklch,var(--chart-2),transparent_85%),transparent_55%)] bg-stone-900"
     >
-      {/* Placeholder scenery gradient — swap for a real hero photo of the house. */}
+      {/* Real photos once the gallery has some, cross-fading automatically. */}
+      <HeroSlideshow images={images} />
+
+      {/* Placeholder scenery gradient — shows whenever there are no photos yet. */}
       <div className="absolute inset-0 bg-gradient-to-b from-stone-900/60 via-stone-900/70 to-stone-950" />
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns=%22http://www.w3.org/2000/svg%22%20width=%2260%22%20height=%2260%22%3E%3Cpath%20d=%22M0%200h60v60H0z%22%20fill=%22none%22/%3E%3Cpath%20d=%22M0%2060L60%200%22%20stroke=%22%23ffffff10%22/%3E%3C/svg%3E')] opacity-40" />
 

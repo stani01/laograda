@@ -15,7 +15,7 @@ export default async function Home() {
 
   return (
     <>
-      <HeroSection settings={settings} />
+      <HeroSection settings={settings} images={gallery} />
       <AmenitiesSection amenities={amenities} />
       <GallerySection images={gallery} />
       <BookingSection />
