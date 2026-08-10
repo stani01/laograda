@@ -1,4 +1,4 @@
-import { Mountain, Mail, Phone, MapPin, Instagram, Globe, Bookmark } from "lucide-react";
+import { Mountain, Mail, Phone, MapPin, Globe, Bookmark } from "lucide-react";
 import type { SiteSettings } from "@/lib/site-content";
 
 export function SiteFooter({ settings }: { settings: SiteSettings }) {
@@ -53,7 +53,14 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
               rel="noopener noreferrer"
               className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-background text-muted-foreground transition hover:bg-primary hover:text-white"
             >
-              <Instagram className="size-5" aria-hidden />
+              <svg
+                viewBox="0 0 24 24"
+                fill="currentColor"
+                className="h-5 w-5"
+                aria-hidden="true"
+              >
+                <path d="M7 2C4.243 2 2 4.243 2 7v10c0 2.757 2.243 5 5 5h10c2.757 0 5-2.243 5-5V7c0-2.757-2.243-5-5-5H7Zm8.5 2.25a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75V5a.75.75 0 0 1 .75-.75h1.5ZM12 7.5a4.5 4.5 0 1 1 0 9 4.5 4.5 0 0 1 0-9Zm0 1.5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Zm5.5 5.25a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-.75.75H6.5a.75.75 0 0 1-.75-.75v-1.5a.75.75 0 0 1 .75-.75h11Z" />
+              </svg>
               <span className="sr-only">Instagram</span>
             </a>
 
