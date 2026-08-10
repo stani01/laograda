@@ -9,7 +9,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
     <footer className="border-t border-border/60 bg-muted/30">
       <div className="mx-auto grid max-w-6xl gap-8 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div>
-          <div className="flex items-center gap-2 font-heading text-lg font-semibold">
+          <div className="flex items-center gap-2 font-script text-2xl">
             <TreePine className="size-5 text-primary" aria-hidden />
             La Ograda
           </div>

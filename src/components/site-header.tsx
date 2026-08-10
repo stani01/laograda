@@ -27,7 +27,7 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-border/60 bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
-        <Link href="#top" className="flex items-center gap-2 font-heading text-lg font-semibold tracking-tight">
+        <Link href="#top" className="flex items-center gap-2 font-script text-2xl tracking-tight">
           <TreePine className="size-5 text-primary" aria-hidden />
           La Ograda
         </Link>

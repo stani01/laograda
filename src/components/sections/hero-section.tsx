@@ -29,7 +29,7 @@ export function HeroSection({
           {settings.address}
         </span>
 
-        <h1 className="max-w-2xl font-heading text-4xl leading-tight font-semibold sm:text-6xl">
+        <h1 className="max-w-2xl font-script text-6xl leading-tight sm:text-8xl">
           LaOgradă
         </h1>
 
