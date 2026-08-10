@@ -52,16 +52,40 @@ create table if not exists public.site_settings (
   phone text not null default '+40 700 000 000',
   email text not null default 'contact@laograda.ro',
   price_normal numeric(10, 2) not null default 350,
+  price_normal_label text not null default 'Sezon normal',
+  price_normal_features text not null default '2 nopți minim
+Curent, apă, Wi-Fi incluse
+Anulare gratuită cu 7 zile înainte',
   price_weekend numeric(10, 2) not null default 450,
+  price_weekend_label text not null default 'Weekend & sărbători',
+  price_weekend_features text not null default '2 nopți minim
+Curent, apă, Wi-Fi incluse
+Foc de tabără & lemne incluse',
   price_long_stay numeric(10, 2) not null default 300,
+  price_long_stay_label text not null default 'Sejur lung (5+ nopți)',
+  price_long_stay_features text not null default 'Preț redus pentru șederi lungi
+Curent, apă, Wi-Fi incluse
+Curățenie inclusă',
   updated_at timestamptz not null default now(),
   constraint site_settings_singleton check (id = 1)
 );
 
 insert into public.site_settings (id) values (1) on conflict (id) do nothing;
 
--- If the table already existed before this column was added, backfill it:
+-- If the table already existed before these columns were added, backfill them:
 alter table public.site_settings add column if not exists maps_url text not null default 'https://maps.app.goo.gl/supPC8QDwQRM7Dns8';
+alter table public.site_settings add column if not exists price_normal_label text not null default 'Sezon normal';
+alter table public.site_settings add column if not exists price_normal_features text not null default '2 nopți minim
+Curent, apă, Wi-Fi incluse
+Anulare gratuită cu 7 zile înainte';
+alter table public.site_settings add column if not exists price_weekend_label text not null default 'Weekend & sărbători';
+alter table public.site_settings add column if not exists price_weekend_features text not null default '2 nopți minim
+Curent, apă, Wi-Fi incluse
+Foc de tabără & lemne incluse';
+alter table public.site_settings add column if not exists price_long_stay_label text not null default 'Sejur lung (5+ nopți)';
+alter table public.site_settings add column if not exists price_long_stay_features text not null default 'Preț redus pentru șederi lungi
+Curent, apă, Wi-Fi incluse
+Curățenie inclusă';
 
 -- `icon` is a key into the fixed icon registry in src/lib/amenity-icons.ts,
 -- not a free-form value, so the admin panel can render a matching lucide icon.

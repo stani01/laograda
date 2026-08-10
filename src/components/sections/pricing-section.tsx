@@ -6,24 +6,24 @@ import type { SiteSettings } from "@/lib/site-content";
 export function PricingSection({ settings }: { settings: SiteSettings }) {
   const plans = [
     {
-      name: "Sezon normal",
+      name: settings.priceNormalLabel,
       price: `${settings.priceNormal} lei`,
       unit: "/ noapte",
-      features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Anulare gratuită cu 7 zile înainte"],
+      features: settings.priceNormalFeatures.split("\n").filter(Boolean),
       highlighted: false,
     },
     {
-      name: "Weekend & sărbători",
+      name: settings.priceWeekendLabel,
       price: `${settings.priceWeekend} lei`,
       unit: "/ noapte",
-      features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Foc de tabără & lemne incluse"],
+      features: settings.priceWeekendFeatures.split("\n").filter(Boolean),
       highlighted: true,
     },
     {
-      name: "Sejur lung (5+ nopți)",
+      name: settings.priceLongStayLabel,
       price: `${settings.priceLongStay} lei`,
       unit: "/ noapte",
-      features: ["Preț redus pentru șederi lungi", "Curent, apă, Wi-Fi incluse", "Curățenie inclusă"],
+      features: settings.priceLongStayFeatures.split("\n").filter(Boolean),
       highlighted: false,
     },
   ];

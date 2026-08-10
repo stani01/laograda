@@ -142,36 +142,95 @@ export function ContentForm({
         <CardHeader>
           <CardTitle className="font-heading text-lg">Prețuri (lei / noapte)</CardTitle>
         </CardHeader>
-        <CardContent className="grid gap-4 sm:grid-cols-3">
-          <div className="grid gap-1.5">
-            <Label htmlFor="priceNormal">Sezon normal</Label>
-            <Input
-              id="priceNormal"
-              type="number"
-              min={0}
-              value={settings.priceNormal}
-              onChange={(e) => setSettings((s) => ({ ...s, priceNormal: Number(e.target.value) }))}
-            />
+        <CardContent className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-3">
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceNormalLabel">Denumire plan</Label>
+              <Input
+                id="priceNormalLabel"
+                value={settings.priceNormalLabel}
+                onChange={(e) => setSettings((s) => ({ ...s, priceNormalLabel: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceNormal">Preț / noapte</Label>
+              <Input
+                id="priceNormal"
+                type="number"
+                min={0}
+                value={settings.priceNormal}
+                onChange={(e) => setSettings((s) => ({ ...s, priceNormal: Number(e.target.value) }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceNormalFeatures">Descriere (câte o linie = un rând)</Label>
+              <Textarea
+                id="priceNormalFeatures"
+                rows={4}
+                value={settings.priceNormalFeatures}
+                onChange={(e) => setSettings((s) => ({ ...s, priceNormalFeatures: e.target.value }))}
+              />
+            </div>
           </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="priceWeekend">Weekend & sărbători</Label>
-            <Input
-              id="priceWeekend"
-              type="number"
-              min={0}
-              value={settings.priceWeekend}
-              onChange={(e) => setSettings((s) => ({ ...s, priceWeekend: Number(e.target.value) }))}
-            />
+
+          <div className="grid gap-3">
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceWeekendLabel">Denumire plan</Label>
+              <Input
+                id="priceWeekendLabel"
+                value={settings.priceWeekendLabel}
+                onChange={(e) => setSettings((s) => ({ ...s, priceWeekendLabel: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceWeekend">Preț / noapte</Label>
+              <Input
+                id="priceWeekend"
+                type="number"
+                min={0}
+                value={settings.priceWeekend}
+                onChange={(e) => setSettings((s) => ({ ...s, priceWeekend: Number(e.target.value) }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceWeekendFeatures">Descriere (câte o linie = un rând)</Label>
+              <Textarea
+                id="priceWeekendFeatures"
+                rows={4}
+                value={settings.priceWeekendFeatures}
+                onChange={(e) => setSettings((s) => ({ ...s, priceWeekendFeatures: e.target.value }))}
+              />
+            </div>
           </div>
-          <div className="grid gap-1.5">
-            <Label htmlFor="priceLongStay">Sejur lung (5+ nopți)</Label>
-            <Input
-              id="priceLongStay"
-              type="number"
-              min={0}
-              value={settings.priceLongStay}
-              onChange={(e) => setSettings((s) => ({ ...s, priceLongStay: Number(e.target.value) }))}
-            />
+
+          <div className="grid gap-3">
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceLongStayLabel">Denumire plan</Label>
+              <Input
+                id="priceLongStayLabel"
+                value={settings.priceLongStayLabel}
+                onChange={(e) => setSettings((s) => ({ ...s, priceLongStayLabel: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceLongStay">Preț / noapte</Label>
+              <Input
+                id="priceLongStay"
+                type="number"
+                min={0}
+                value={settings.priceLongStay}
+                onChange={(e) => setSettings((s) => ({ ...s, priceLongStay: Number(e.target.value) }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="priceLongStayFeatures">Descriere (câte o linie = un rând)</Label>
+              <Textarea
+                id="priceLongStayFeatures"
+                rows={4}
+                value={settings.priceLongStayFeatures}
+                onChange={(e) => setSettings((s) => ({ ...s, priceLongStayFeatures: e.target.value }))}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>

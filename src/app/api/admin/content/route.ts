@@ -13,8 +13,14 @@ const contentSchema = z.object({
     phone: z.string().trim().min(1).max(40),
     email: z.email(),
     priceNormal: z.coerce.number().min(0),
+    priceNormalLabel: z.string().trim().min(1).max(80),
+    priceNormalFeatures: z.string().trim().min(1).max(500),
     priceWeekend: z.coerce.number().min(0),
+    priceWeekendLabel: z.string().trim().min(1).max(80),
+    priceWeekendFeatures: z.string().trim().min(1).max(500),
     priceLongStay: z.coerce.number().min(0),
+    priceLongStayLabel: z.string().trim().min(1).max(80),
+    priceLongStayFeatures: z.string().trim().min(1).max(500),
   }),
   amenities: z
     .array(
@@ -55,8 +61,14 @@ export async function PUT(request: Request) {
       phone: settings.phone,
       email: settings.email,
       price_normal: settings.priceNormal,
+      price_normal_label: settings.priceNormalLabel,
+      price_normal_features: settings.priceNormalFeatures,
       price_weekend: settings.priceWeekend,
+      price_weekend_label: settings.priceWeekendLabel,
+      price_weekend_features: settings.priceWeekendFeatures,
       price_long_stay: settings.priceLongStay,
+      price_long_stay_label: settings.priceLongStayLabel,
+      price_long_stay_features: settings.priceLongStayFeatures,
       updated_at: new Date().toISOString(),
     })
     .eq("id", 1);
