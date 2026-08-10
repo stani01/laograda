@@ -1,32 +1,33 @@
 import { Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import type { SiteSettings } from "@/lib/site-content";
 
-const PLANS = [
-  {
-    name: "Sezon normal",
-    price: "350 lei",
-    unit: "/ noapte",
-    features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Anulare gratuită cu 7 zile înainte"],
-    highlighted: false,
-  },
-  {
-    name: "Weekend & sărbători",
-    price: "450 lei",
-    unit: "/ noapte",
-    features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Foc de tabără & lemne incluse"],
-    highlighted: true,
-  },
-  {
-    name: "Sejur lung (5+ nopți)",
-    price: "300 lei",
-    unit: "/ noapte",
-    features: ["Preț redus pentru șederi lungi", "Curent, apă, Wi-Fi incluse", "Curățenie inclusă"],
-    highlighted: false,
-  },
-];
+export function PricingSection({ settings }: { settings: SiteSettings }) {
+  const plans = [
+    {
+      name: "Sezon normal",
+      price: `${settings.priceNormal} lei`,
+      unit: "/ noapte",
+      features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Anulare gratuită cu 7 zile înainte"],
+      highlighted: false,
+    },
+    {
+      name: "Weekend & sărbători",
+      price: `${settings.priceWeekend} lei`,
+      unit: "/ noapte",
+      features: ["2 nopți minim", "Curent, apă, Wi-Fi incluse", "Foc de tabără & lemne incluse"],
+      highlighted: true,
+    },
+    {
+      name: "Sejur lung (5+ nopți)",
+      price: `${settings.priceLongStay} lei`,
+      unit: "/ noapte",
+      features: ["Preț redus pentru șederi lungi", "Curent, apă, Wi-Fi incluse", "Curățenie inclusă"],
+      highlighted: false,
+    },
+  ];
 
-export function PricingSection() {
   return (
     <section id="preturi" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-2xl text-center">
@@ -38,7 +39,7 @@ export function PricingSection() {
       </div>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-3">
-        {PLANS.map((plan) => (
+        {plans.map((plan) => (
           <Card
             key={plan.name}
             className={plan.highlighted ? "border-primary ring-2 ring-primary/40" : ""}

@@ -23,26 +23,40 @@ prin NETOPIA (activare ulterioară, după deschiderea contului de comerciant).
 ```
 src/
   app/
-    page.tsx              — pagina principală (compune secțiunile de mai jos)
-    layout.tsx             — layout global, metadata, header/footer, fonturi
+    (site)/
+      page.tsx            — pagina principală (compune secțiunile de mai jos)
+      layout.tsx           — header + footer public, cu conținut din Supabase
+    admin/
+      login/               — autentificare (Supabase Auth)
+      (protected)/          — protejat: rezervări, conținut, galerie (necesită login)
+    layout.tsx              — layout global minim, metadata, fonturi, Toaster
     api/
       availability/        — GET: date ocupate, sincronizate din Booking + Airbnb
       bookings/             — POST: cerere de rezervare (validare + Supabase + email)
       contact/               — POST: formular de contact (email via Resend)
+      admin/
+        bookings/[id]/       — PATCH: schimbă statusul unei rezervări
+        content/             — PUT: salvează textele/prețurile/facilitățile
+        gallery/             — POST: încarcă o poză · [id] DELETE: șterge o poză
       payments/netopia/
         initiate/            — POST: pornește o plată NETOPIA pentru o rezervare
         ipn/                 — POST: notificare server-to-server de la NETOPIA
   components/
     site-header.tsx, site-footer.tsx
     sections/               — Hero, Facilități, Galerie, Rezervare, Prețuri, Contact
+    admin/                  — formulare și acțiuni din panoul de admin
     ui/                     — componente shadcn/ui
   lib/
     ical.ts                 — descarcă + combină feed-urile iCal
     resend.ts               — emailuri tranzacționale
     netopia.ts               — integrare NETOPIA Payments API v2 (schelet)
+    site-content.ts          — citește conținutul editabil din Supabase (cu fallback)
+    amenity-icons.ts         — set fix de iconițe selectabile pentru facilități
+    admin-auth.ts            — verifică login + lista de emailuri permise
     supabase/               — clienți Supabase (browser, server, admin)
+  proxy.ts                  — reîmprospătează sesiunea Supabase, protejează /admin
   types/booking.ts          — scheme zod + tipuri partajate
-supabase/schema.sql          — schema inițială (tabele bookings, contact_messages)
+supabase/schema.sql          — schema (bookings, site_settings, amenities, gallery_images)
 ```
 
 ## Configurare locală
@@ -93,4 +107,29 @@ npm run lint    # ESLint
 Proiectul este pregătit pentru [Vercel](https://vercel.com): conectează
 repo-ul, adaugă variabilele de mediu din `.env.example` în setările
 proiectului și fiecare push pe `main` va genera un deploy.
+
+## Panou de admin (/admin)
+
+Pentru ca proprietarii să poată edita singuri textele, prețurile,
+facilitățile și pozele galeriei, fără să atingă codul:
+
+1. Ai nevoie de un proiect Supabase configurat (vezi mai sus) — panoul de
+   admin nu funcționează fără el.
+2. În **Supabase Studio → Authentication → Providers → Email**, dezactivează
+   "Allow new users to sign up" (nu vrem înregistrări publice).
+3. În **Authentication → Users → Add user**, creează manual contul (email +
+   parolă) pentru persoana care va administra site-ul.
+4. Adaugă acel email în variabila `ADMIN_EMAILS` (separă prin virgulă dacă
+   sunt mai multe conturi).
+5. Intră pe `/admin/login` cu acel cont. De acolo poți:
+   - **Rezervări** — confirmă sau anulează cererile primite prin site.
+   - **Conținut** — editează textele, prețurile pe noapte și lista de facilități.
+   - **Galerie** — încarcă sau șterge poze (stocate în Supabase Storage,
+     bucket `gallery`, creat automat de `supabase/schema.sql`).
+
+Accesul e verificat de două ori, independent (o practică de securitate
+standard): o dată în [src/proxy.ts](src/proxy.ts) (redirect rapid dacă nu ești
+autentificat) și o dată în fiecare pagină/rută din `/admin` prin
+[requireAdminUser](src/lib/admin-auth.ts) — chiar dacă cineva ar ocoli
+prima verificare, a doua tot blochează accesul.
 

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { TreePine, Mail, Phone, MapPin } from "lucide-react";
+import type { SiteSettings } from "@/lib/site-content";
 
-export function SiteFooter() {
+export function SiteFooter({ settings }: { settings: SiteSettings }) {
   const year = new Date().getFullYear();
 
   return (
@@ -12,11 +13,7 @@ export function SiteFooter() {
             <TreePine className="size-5 text-primary" aria-hidden />
             La Ograda
           </div>
-          <p className="mt-3 max-w-xs text-sm text-muted-foreground">
-            O casă de vacanță primitoare la poalele Munților Făgăraș — locul
-            perfect pentru o evadare din oraș, weekenduri liniștite și
-            vacanțe în familie.
-          </p>
+          <p className="mt-3 max-w-xs text-sm text-muted-foreground">{settings.aboutText}</p>
         </div>
 
         <div className="text-sm">
@@ -24,19 +21,19 @@ export function SiteFooter() {
           <ul className="space-y-2 text-muted-foreground">
             <li className="flex items-center gap-2">
               <Phone className="size-4 shrink-0" aria-hidden />
-              <a href="tel:+40700000000" className="hover:text-foreground">
-                +40 700 000 000
+              <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="hover:text-foreground">
+                {settings.phone}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="size-4 shrink-0" aria-hidden />
-              <a href="mailto:contact@laograda.ro" className="hover:text-foreground">
-                contact@laograda.ro
+              <a href={`mailto:${settings.email}`} className="hover:text-foreground">
+                {settings.email}
               </a>
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="size-4 shrink-0" aria-hidden />
-              <span>Avrig, Județul Sibiu</span>
+              <span>{settings.address}</span>
             </li>
           </ul>
         </div>

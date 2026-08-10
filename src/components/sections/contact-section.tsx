@@ -8,8 +8,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
+import type { SiteSettings } from "@/lib/site-content";
 
-export function ContactSection() {
+export function ContactSection({ settings }: { settings: SiteSettings }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -60,11 +61,11 @@ export function ContactSection() {
           <ul className="mt-6 space-y-3 text-sm">
             <li className="flex items-center gap-2">
               <Phone className="size-4 text-primary" aria-hidden />
-              <a href="tel:+40700000000" className="hover:underline">+40 700 000 000</a>
+              <a href={`tel:${settings.phone.replace(/\s+/g, "")}`} className="hover:underline">{settings.phone}</a>
             </li>
             <li className="flex items-center gap-2">
               <Mail className="size-4 text-primary" aria-hidden />
-              <a href="mailto:contact@laograda.ro" className="hover:underline">contact@laograda.ro</a>
+              <a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a>
             </li>
           </ul>
         </div>

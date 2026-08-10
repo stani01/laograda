@@ -37,3 +37,67 @@ create table if not exists public.contact_messages (
 -- validates input with zod before touching the database.
 alter table public.bookings enable row level security;
 alter table public.contact_messages enable row level security;
+
+-- ---------------------------------------------------------------------------
+-- Admin-editable site content (managed from /admin by the owners)
+-- ---------------------------------------------------------------------------
+
+-- Singleton row (id is always 1) holding the editable text/price fields.
+create table if not exists public.site_settings (
+  id integer primary key default 1,
+  hero_subtitle text not null default 'Casă de vacanță la poalele Munților Făgăraș, cu vedere superbă la munte, curte generoasă și râu în apropiere.',
+  about_text text not null default 'O casă de vacanță primitoare la poalele Munților Făgăraș — locul perfect pentru o evadare din oraș, weekenduri liniștite și vacanțe în familie.',
+  address text not null default 'Avrig, Județul Sibiu',
+  phone text not null default '+40 700 000 000',
+  email text not null default 'contact@laograda.ro',
+  price_normal numeric(10, 2) not null default 350,
+  price_weekend numeric(10, 2) not null default 450,
+  price_long_stay numeric(10, 2) not null default 300,
+  updated_at timestamptz not null default now(),
+  constraint site_settings_singleton check (id = 1)
+);
+
+insert into public.site_settings (id) values (1) on conflict (id) do nothing;
+
+-- `icon` is a key into the fixed icon registry in src/lib/amenity-icons.ts,
+-- not a free-form value, so the admin panel can render a matching lucide icon.
+create table if not exists public.amenities (
+  id uuid primary key default gen_random_uuid(),
+  icon text not null default 'sparkles',
+  label text not null,
+  position integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+-- `storage_path` is the object path inside the public "gallery" Storage bucket.
+create table if not exists public.gallery_images (
+  id uuid primary key default gen_random_uuid(),
+  storage_path text not null,
+  alt text not null default '',
+  position integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+alter table public.site_settings enable row level security;
+alter table public.amenities enable row level security;
+alter table public.gallery_images enable row level security;
+
+-- Public Storage bucket for gallery photos, managed from the admin panel.
+insert into storage.buckets (id, name, public)
+values ('gallery', 'gallery', true)
+on conflict (id) do nothing;
+
+create policy "Public read access for gallery photos"
+on storage.objects for select
+using (bucket_id = 'gallery');
+
+create policy "Authenticated users can upload gallery photos"
+on storage.objects for insert
+to authenticated
+with check (bucket_id = 'gallery');
+
+create policy "Authenticated users can delete gallery photos"
+on storage.objects for delete
+to authenticated
+using (bucket_id = 'gallery');
+
