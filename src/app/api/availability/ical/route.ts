@@ -26,17 +26,6 @@ export async function GET(request: NextRequest) {
   const expectedToken = process.env.ICAL_EXPORT_SECRET?.trim();
   const token = request.nextUrl.searchParams.get("token")?.trim();
 
-  // TEMPORARY debug branch — reveals no secret values, just booleans/lengths,
-  // to diagnose the ICAL_EXPORT_SECRET env var mismatch. Remove once fixed.
-  if (request.nextUrl.searchParams.get("debug") === "1") {
-    return NextResponse.json({
-      envVarPresent: Boolean(expectedToken),
-      envVarLength: expectedToken?.length ?? 0,
-      providedLength: token?.length ?? 0,
-      matches: Boolean(expectedToken && token && expectedToken === token),
-    });
-  }
-
   if (!expectedToken || !token || token !== expectedToken) {
     return NextResponse.json({ error: "Neautorizat" }, { status: 401 });
   }
