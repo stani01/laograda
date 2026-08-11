@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Menu, Mountain } from "lucide-react";
+import type { SiteSettings } from "@/lib/site-content";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -21,7 +22,7 @@ const NAV_LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
-export function SiteHeader() {
+export function SiteHeader({ settings }: { settings: SiteSettings }) {
   const [open, setOpen] = useState(false);
 
   return (
@@ -45,7 +46,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden md:block">
-          <Button size="sm" nativeButton={false} render={<Link href="#rezervare">Verifică disponibilitate</Link>} />
+          <Button size="sm" nativeButton={false} render={<Link href="#rezervare">{settings.ctaPrimaryText}</Link>} />
         </div>
 
         <Sheet open={open} onOpenChange={setOpen}>
@@ -77,7 +78,7 @@ export function SiteHeader() {
                 nativeButton={false}
                 render={
                   <Link href="#rezervare" onClick={() => setOpen(false)}>
-                    Verifică disponibilitate
+                    {settings.ctaPrimaryText}
                   </Link>
                 }
               />

@@ -78,6 +78,24 @@ export function ContentForm({
           <CardTitle className="font-heading text-lg">Texte principale</CardTitle>
         </CardHeader>
         <CardContent className="flex flex-col gap-4">
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-1.5">
+              <Label htmlFor="heroTitle">Titlu (prima pagină)</Label>
+              <Input
+                id="heroTitle"
+                value={settings.heroTitle}
+                onChange={(e) => setSettings((s) => ({ ...s, heroTitle: e.target.value }))}
+              />
+            </div>
+            <div className="grid gap-1.5">
+              <Label htmlFor="ctaPrimaryText">Text buton principal</Label>
+              <Input
+                id="ctaPrimaryText"
+                value={settings.ctaPrimaryText}
+                onChange={(e) => setSettings((s) => ({ ...s, ctaPrimaryText: e.target.value }))}
+              />
+            </div>
+          </div>
           <div className="grid gap-1.5">
             <Label htmlFor="heroSubtitle">Subtitlu (prima pagină)</Label>
             <Textarea
@@ -85,6 +103,14 @@ export function ContentForm({
               rows={3}
               value={settings.heroSubtitle}
               onChange={(e) => setSettings((s) => ({ ...s, heroSubtitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="ctaSecondaryText">Text buton secundar (prima pagină)</Label>
+            <Input
+              id="ctaSecondaryText"
+              value={settings.ctaSecondaryText}
+              onChange={(e) => setSettings((s) => ({ ...s, ctaSecondaryText: e.target.value }))}
             />
           </div>
           <div className="grid gap-1.5">
@@ -174,6 +200,100 @@ export function ContentForm({
                 onChange={(e) => setSettings((s) => ({ ...s, bookingUrl: e.target.value }))}
               />
             </div>
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="travelminitUrl">Travelminit</Label>
+            <Input
+              id="travelminitUrl"
+              type="url"
+              placeholder="https://www.travelminit.ro/..."
+              value={settings.travelminitUrl}
+              onChange={(e) => setSettings((s) => ({ ...s, travelminitUrl: e.target.value }))}
+            />
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="font-heading text-lg">Texte secțiuni</CardTitle>
+        </CardHeader>
+        <CardContent className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-1.5">
+            <Label htmlFor="amenitiesTitle">Titlu — Facilități</Label>
+            <Input
+              id="amenitiesTitle"
+              value={settings.amenitiesTitle}
+              onChange={(e) => setSettings((s) => ({ ...s, amenitiesTitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="galleryTitle">Titlu — Galerie foto</Label>
+            <Input
+              id="galleryTitle"
+              value={settings.galleryTitle}
+              onChange={(e) => setSettings((s) => ({ ...s, galleryTitle: e.target.value }))}
+            />
+          </div>
+          <div className="col-span-full grid gap-1.5">
+            <Label htmlFor="amenitiesSubtitle">Subtitlu — Facilități</Label>
+            <Textarea
+              id="amenitiesSubtitle"
+              rows={2}
+              value={settings.amenitiesSubtitle}
+              onChange={(e) => setSettings((s) => ({ ...s, amenitiesSubtitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="bookingTitle">Titlu — Rezervare</Label>
+            <Input
+              id="bookingTitle"
+              value={settings.bookingTitle}
+              onChange={(e) => setSettings((s) => ({ ...s, bookingTitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="pricingTitle">Titlu — Prețuri</Label>
+            <Input
+              id="pricingTitle"
+              value={settings.pricingTitle}
+              onChange={(e) => setSettings((s) => ({ ...s, pricingTitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="bookingSubtitle">Subtitlu — Rezervare</Label>
+            <Textarea
+              id="bookingSubtitle"
+              rows={2}
+              value={settings.bookingSubtitle}
+              onChange={(e) => setSettings((s) => ({ ...s, bookingSubtitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="pricingSubtitle">Subtitlu — Prețuri</Label>
+            <Textarea
+              id="pricingSubtitle"
+              rows={2}
+              value={settings.pricingSubtitle}
+              onChange={(e) => setSettings((s) => ({ ...s, pricingSubtitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="contactTitle">Titlu — Contact</Label>
+            <Input
+              id="contactTitle"
+              value={settings.contactTitle}
+              onChange={(e) => setSettings((s) => ({ ...s, contactTitle: e.target.value }))}
+            />
+          </div>
+          <div className="grid gap-1.5">
+            <Label htmlFor="contactSubtitle">Subtitlu — Contact</Label>
+            <Textarea
+              id="contactSubtitle"
+              rows={2}
+              value={settings.contactSubtitle}
+              onChange={(e) => setSettings((s) => ({ ...s, contactSubtitle: e.target.value }))}
+            />
           </div>
         </CardContent>
       </Card>

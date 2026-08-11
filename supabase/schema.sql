@@ -55,6 +55,19 @@ create table if not exists public.site_settings (
   facebook_url text not null default 'https://www.facebook.com/p/LaOgrada-100071189138778/',
   airbnb_url text not null default 'https://www.airbnb.com/rooms/44671053',
   booking_url text not null default 'https://www.booking.com/hotel/ro/laograda.ro.html',
+  travelminit_url text not null default 'https://travelminit.ro/cabana-la-ograda-avrig',
+  hero_title text not null default 'LaOgradă',
+  cta_primary_text text not null default 'Verifică disponibilitate',
+  cta_secondary_text text not null default 'Vezi galeria foto',
+  amenities_title text not null default 'Facilități',
+  amenities_subtitle text not null default '7 oaspeți · 3 dormitoare · 3 paturi · 2 băi — tot ce ai nevoie pentru o ședere confortabilă, indiferent de sezon.',
+  gallery_title text not null default 'Galerie foto',
+  booking_title text not null default 'Verifică disponibilitatea și rezervă',
+  booking_subtitle text not null default 'Calendarul este sincronizat automat cu Booking.com, Airbnb și Travelminit — datele ocupate sunt blocate mai jos.',
+  pricing_title text not null default 'Prețuri',
+  pricing_subtitle text not null default 'Prețuri orientative — vor fi confirmate la trimiterea cererii de rezervare. Acceptăm și carduri de vacanță.',
+  contact_title text not null default 'Contact',
+  contact_subtitle text not null default 'Ai întrebări despre casă, acces sau facilități? Scrie-ne și îți răspundem cât mai curând.',
   price_normal numeric(10, 2) not null default 350,
   price_normal_label text not null default 'Sezon normal',
   price_normal_features text not null default '2 nopți minim
@@ -82,6 +95,19 @@ alter table public.site_settings add column if not exists instagram_url text not
 alter table public.site_settings add column if not exists facebook_url text not null default 'https://www.facebook.com/p/LaOgrada-100071189138778/';
 alter table public.site_settings add column if not exists airbnb_url text not null default 'https://www.airbnb.com/rooms/44671053';
 alter table public.site_settings add column if not exists booking_url text not null default 'https://www.booking.com/hotel/ro/laograda.ro.html';
+alter table public.site_settings add column if not exists travelminit_url text not null default '';
+alter table public.site_settings add column if not exists hero_title text not null default 'LaOgradă';
+alter table public.site_settings add column if not exists cta_primary_text text not null default 'Verifică disponibilitate';
+alter table public.site_settings add column if not exists cta_secondary_text text not null default 'Vezi galeria foto';
+alter table public.site_settings add column if not exists amenities_title text not null default 'Facilități';
+alter table public.site_settings add column if not exists amenities_subtitle text not null default '7 oaspeți · 3 dormitoare · 3 paturi · 2 băi — tot ce ai nevoie pentru o ședere confortabilă, indiferent de sezon.';
+alter table public.site_settings add column if not exists gallery_title text not null default 'Galerie foto';
+alter table public.site_settings add column if not exists booking_title text not null default 'Verifică disponibilitatea și rezervă';
+alter table public.site_settings add column if not exists booking_subtitle text not null default 'Calendarul este sincronizat automat cu Booking.com, Airbnb și Travelminit — datele ocupate sunt blocate mai jos.';
+alter table public.site_settings add column if not exists pricing_title text not null default 'Prețuri';
+alter table public.site_settings add column if not exists pricing_subtitle text not null default 'Prețuri orientative — vor fi confirmate la trimiterea cererii de rezervare. Acceptăm și carduri de vacanță.';
+alter table public.site_settings add column if not exists contact_title text not null default 'Contact';
+alter table public.site_settings add column if not exists contact_subtitle text not null default 'Ai întrebări despre casă, acces sau facilități? Scrie-ne și îți răspundem cât mai curând.';
 alter table public.site_settings add column if not exists price_normal_label text not null default 'Sezon normal';
 alter table public.site_settings add column if not exists price_normal_features text not null default '2 nopți minim
 Curent, apă, Wi-Fi incluse

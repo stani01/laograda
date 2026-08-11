@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { Loader2, Trash2, Upload } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, Trash2, Upload } from "lucide-react";
 import type { GalleryImage } from "@/lib/site-content";
 
 export function GalleryManager({ initialImages }: { initialImages: GalleryImage[] }) {
@@ -18,19 +18,22 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
   const [alt, setAlt] = useState("");
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [reorderingId, setReorderingId] = useState<string | null>(null);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
-    const file = fileInputRef.current?.files?.[0];
-    if (!file) {
-      toast.error("Selectează o poză.");
+    const files = fileInputRef.current?.files;
+    if (!files || files.length === 0) {
+      toast.error("Selectează cel puțin o poză.");
       return;
     }
 
     setUploading(true);
     try {
       const formData = new FormData();
-      formData.set("file", file);
+      for (const file of files) {
+        formData.append("files", file);
+      }
       formData.set("alt", alt);
 
       const res = await fetch("/api/admin/gallery", { method: "POST", body: formData });
@@ -41,10 +44,12 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
         return;
       }
 
-      setImages((prev) => [...prev, data]);
+      setImages((prev) => [...prev, ...(data.images as GalleryImage[])]);
       setAlt("");
       if (fileInputRef.current) fileInputRef.current.value = "";
-      toast.success("Poza a fost adăugată.");
+      toast.success(
+        data.images.length > 1 ? `${data.images.length} poze au fost adăugate.` : "Poza a fost adăugată."
+      );
       router.refresh();
     } catch {
       toast.error("A apărut o eroare de rețea.");
@@ -71,14 +76,49 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
     }
   }
 
+  async function persistOrder(order: GalleryImage[]) {
+    try {
+      const res = await fetch("/api/admin/gallery", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ order: order.map((img) => img.id) }),
+      });
+      if (!res.ok) {
+        toast.error("Nu am putut salva ordinea pozelor.");
+        return;
+      }
+      router.refresh();
+    } catch {
+      toast.error("A apărut o eroare de rețea.");
+    }
+  }
+
+  function moveImage(index: number, direction: -1 | 1) {
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= images.length) return;
+
+    const reordered = [...images];
+    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+
+    setReorderingId(images[index].id);
+    setImages(reordered);
+    persistOrder(reordered).finally(() => setReorderingId(null));
+  }
+
   return (
     <div className="flex flex-col gap-6">
       <Card>
         <CardContent>
           <form onSubmit={handleUpload} className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <div className="grid flex-1 gap-1.5">
-              <Label htmlFor="gallery-file">Poză (jpg, png, webp — max 8MB)</Label>
-              <Input id="gallery-file" type="file" accept="image/jpeg,image/png,image/webp,image/avif" ref={fileInputRef} />
+              <Label htmlFor="gallery-file">Poze (jpg, png, webp — max 8MB fiecare, poți selecta mai multe)</Label>
+              <Input
+                id="gallery-file"
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/avif"
+                multiple
+                ref={fileInputRef}
+              />
             </div>
             <div className="grid flex-1 gap-1.5">
               <Label htmlFor="gallery-alt">Descriere scurtă</Label>
@@ -96,15 +136,45 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
         <p className="text-sm text-muted-foreground">Nu ai adăugat încă nicio poză.</p>
       )}
 
+      {images.length > 1 && (
+        <p className="text-xs text-muted-foreground">
+          Folosește săgețile de pe fiecare poză pentru a schimba ordinea în care apar pe site.
+        </p>
+      )}
+
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {images.map((image) => (
+        {images.map((image, index) => (
           <div key={image.id} className="group relative aspect-square overflow-hidden rounded-xl bg-muted">
             <Image src={image.url} alt={image.alt} fill className="object-cover" unoptimized />
+
+            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2 opacity-0 transition-opacity group-hover:opacity-100">
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon-sm"
+                disabled={index === 0 || reorderingId !== null}
+                onClick={() => moveImage(index, -1)}
+                aria-label="Mută mai devreme"
+              >
+                <ArrowLeft className="size-4" aria-hidden />
+              </Button>
+              <Button
+                type="button"
+                variant="secondary"
+                size="icon-sm"
+                disabled={index === images.length - 1 || reorderingId !== null}
+                onClick={() => moveImage(index, 1)}
+                aria-label="Mută mai târziu"
+              >
+                <ArrowRight className="size-4" aria-hidden />
+              </Button>
+            </div>
+
             <Button
               type="button"
               variant="destructive"
               size="icon-sm"
-              className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
+              className="absolute bottom-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
               disabled={deletingId === image.id}
               onClick={() => handleDelete(image.id)}
             >

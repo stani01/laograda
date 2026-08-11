@@ -37,7 +37,7 @@ export const contactMessageSchema = z.object({
 
 export type ContactMessageInput = z.infer<typeof contactMessageSchema>;
 
-export type BusySource = "booking" | "airbnb";
+export type BusySource = "booking" | "airbnb" | "travelminit";
 
 export interface BusyRange {
   /** Inclusive ISO date (YYYY-MM-DD) when the stay starts. */

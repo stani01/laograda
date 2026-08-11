@@ -31,11 +31,8 @@ export function PricingSection({ settings }: { settings: SiteSettings }) {
   return (
     <section id="preturi" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="mx-auto max-w-2xl text-center">
-        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Prețuri</h2>
-        <p className="mt-3 text-muted-foreground">
-          Prețuri orientative — vor fi confirmate la trimiterea cererii de
-          rezervare. Acceptăm și carduri de vacanță.
-        </p>
+        <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{settings.pricingTitle}</h2>
+        <p className="mt-3 text-muted-foreground">{settings.pricingSubtitle}</p>
       </div>
 
       <div className="mt-12 grid gap-6 sm:grid-cols-3">

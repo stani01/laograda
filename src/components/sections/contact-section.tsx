@@ -52,11 +52,8 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
     <section id="contact" className="mx-auto max-w-6xl px-4 py-20 sm:px-6">
       <div className="grid gap-10 lg:grid-cols-2">
         <div>
-          <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Contact</h2>
-          <p className="mt-3 max-w-md text-muted-foreground">
-            Ai întrebări despre casă, acces sau facilități? Scrie-ne și îți
-            răspundem cât mai curând.
-          </p>
+          <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{settings.contactTitle}</h2>
+          <p className="mt-3 max-w-md text-muted-foreground">{settings.contactSubtitle}</p>
 
           <ul className="mt-6 space-y-3 text-sm">
             <li className="flex items-center gap-2">

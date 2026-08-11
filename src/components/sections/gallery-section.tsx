@@ -1,17 +1,26 @@
+"use client";
+
 import { ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import type { GalleryImage } from "@/lib/site-content";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import type { GalleryImage, SiteSettings } from "@/lib/site-content";
 
 // Placeholder tiles shown until real photos are uploaded from /admin/galerie.
 const PLACEHOLDER_COUNT = 6;
 
-export function GallerySection({ images }: { images: GalleryImage[] }) {
+export function GallerySection({
+  settings,
+  images,
+}: {
+  settings: SiteSettings;
+  images: GalleryImage[];
+}) {
   return (
     <section id="galerie" className="bg-muted/30 py-20">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="font-heading text-3xl font-semibold sm:text-4xl">Galerie foto</h2>
+          <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{settings.galleryTitle}</h2>
           {images.length === 0 && (
             <p className="mt-3 text-muted-foreground">
               Fotografiem curând casa pentru acest site — până atunci, poți
@@ -32,9 +41,48 @@ export function GallerySection({ images }: { images: GalleryImage[] }) {
         {images.length > 0 ? (
           <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-3">
             {images.map((image) => (
-              <div key={image.id} className="relative aspect-square overflow-hidden rounded-xl bg-muted">
-                <Image src={image.url} alt={image.alt} fill className="object-cover" unoptimized />
-              </div>
+              <Dialog key={image.id}>
+                <DialogTrigger
+                  render={
+                    <button
+                      type="button"
+                      aria-label="Mărește poza"
+                      className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-xl bg-muted"
+                    >
+                      <Image
+                        src={image.url}
+                        alt={image.alt}
+                        fill
+                        className="object-cover transition-transform duration-300 group-hover:scale-105"
+                        unoptimized
+                      />
+                    </button>
+                  }
+                />
+                <DialogContent
+                  showCloseButton
+                  className="max-h-[90vh] w-auto max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-4xl"
+                >
+                  <DialogClose
+                    render={
+                      <button
+                        type="button"
+                        aria-label="Micșorează poza"
+                        className="relative aspect-[4/3] max-h-[85vh] w-full cursor-zoom-out overflow-hidden rounded-xl sm:aspect-video"
+                      />
+                    }
+                  >
+                    <Image
+                      src={image.url}
+                      alt={image.alt}
+                      fill
+                      className="object-contain"
+                      unoptimized
+                      sizes="90vw"
+                    />
+                  </DialogClose>
+                </DialogContent>
+              </Dialog>
             ))}
           </div>
         ) : (

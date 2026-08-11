@@ -12,6 +12,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import type { BusyRange } from "@/types/booking";
+import type { SiteSettings } from "@/lib/site-content";
 
 function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -33,7 +34,7 @@ function useDisabledDays(busy: BusyRange[]) {
   }, [busy]);
 }
 
-export function BookingSection() {
+export function BookingSection({ settings }: { settings: SiteSettings }) {
   const [busy, setBusy] = useState<BusyRange[]>([]);
   const [loadingAvailability, setLoadingAvailability] = useState(true);
   const [range, setRange] = useState<DateRange | undefined>();
@@ -117,12 +118,9 @@ export function BookingSection() {
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <div className="mx-auto max-w-2xl text-center">
           <h2 className="font-heading text-3xl font-semibold sm:text-4xl">
-            Verifică disponibilitatea și rezervă
+            {settings.bookingTitle}
           </h2>
-          <p className="mt-3 text-muted-foreground">
-            Calendarul este sincronizat automat cu Booking.com și Airbnb —
-            datele ocupate sunt blocate mai jos.
-          </p>
+          <p className="mt-3 text-muted-foreground">{settings.bookingSubtitle}</p>
         </div>
 
         <div className="mt-12 grid gap-6 lg:grid-cols-2">

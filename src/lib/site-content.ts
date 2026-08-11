@@ -2,7 +2,10 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import type { AmenityIconKey } from "@/lib/amenity-icons";
 
 export interface SiteSettings {
+  heroTitle: string;
   heroSubtitle: string;
+  ctaPrimaryText: string;
+  ctaSecondaryText: string;
   aboutText: string;
   address: string;
   mapsUrl: string;
@@ -12,6 +15,16 @@ export interface SiteSettings {
   facebookUrl: string;
   airbnbUrl: string;
   bookingUrl: string;
+  travelminitUrl: string;
+  amenitiesTitle: string;
+  amenitiesSubtitle: string;
+  galleryTitle: string;
+  bookingTitle: string;
+  bookingSubtitle: string;
+  pricingTitle: string;
+  pricingSubtitle: string;
+  contactTitle: string;
+  contactSubtitle: string;
   priceNormal: number;
   priceNormalLabel: string;
   priceNormalFeatures: string;
@@ -46,8 +59,11 @@ export interface SiteContent {
 // Same copy the site shipped with, used whenever Supabase isn't configured
 // yet (or the tables are empty) so the public site never breaks.
 export const DEFAULT_SETTINGS: SiteSettings = {
+  heroTitle: "LaOgradă",
   heroSubtitle:
     "Casă de vacanță la poalele Munților Făgăraș, cu vedere superbă la munte, curte generoasă și râu în apropiere.",
+  ctaPrimaryText: "Verifică disponibilitate",
+  ctaSecondaryText: "Vezi galeria foto",
   aboutText:
     "O casă de vacanță primitoare la poalele Munților Făgăraș — locul perfect pentru o evadare din oraș, weekenduri liniștite și vacanțe în familie.",
   address: "Valea Avrigului, Județul Sibiu",
@@ -58,6 +74,19 @@ export const DEFAULT_SETTINGS: SiteSettings = {
   facebookUrl: "https://www.facebook.com/p/LaOgrada-100071189138778/",
   airbnbUrl: "https://www.airbnb.com/rooms/44671053",
   bookingUrl: "https://www.booking.com/hotel/ro/laograda.ro.html",
+  travelminitUrl: "https://travelminit.ro/cabana-la-ograda-avrig",
+  amenitiesTitle: "Facilități",
+  amenitiesSubtitle:
+    "7 oaspeți · 3 dormitoare · 3 paturi · 2 băi — tot ce ai nevoie pentru o ședere confortabilă, indiferent de sezon.",
+  galleryTitle: "Galerie foto",
+  bookingTitle: "Verifică disponibilitatea și rezervă",
+  bookingSubtitle:
+    "Calendarul este sincronizat automat cu Booking.com, Airbnb și Travelminit — datele ocupate sunt blocate mai jos.",
+  pricingTitle: "Prețuri",
+  pricingSubtitle:
+    "Prețuri orientative — vor fi confirmate la trimiterea cererii de rezervare. Acceptăm și carduri de vacanță.",
+  contactTitle: "Contact",
+  contactSubtitle: "Ai întrebări despre casă, acces sau facilități? Scrie-ne și îți răspundem cât mai curând.",
   priceNormal: 350,
   priceNormalLabel: "Sezon normal",
   priceNormalFeatures:
@@ -104,7 +133,10 @@ export async function getSiteContent(): Promise<SiteContent> {
 
     const settings: SiteSettings = settingsRes.data
       ? {
+          heroTitle: settingsRes.data.hero_title ?? DEFAULT_SETTINGS.heroTitle,
           heroSubtitle: settingsRes.data.hero_subtitle ?? DEFAULT_SETTINGS.heroSubtitle,
+          ctaPrimaryText: settingsRes.data.cta_primary_text ?? DEFAULT_SETTINGS.ctaPrimaryText,
+          ctaSecondaryText: settingsRes.data.cta_secondary_text ?? DEFAULT_SETTINGS.ctaSecondaryText,
           aboutText: settingsRes.data.about_text ?? DEFAULT_SETTINGS.aboutText,
           address: settingsRes.data.address ?? DEFAULT_SETTINGS.address,
           mapsUrl: settingsRes.data.maps_url ?? DEFAULT_SETTINGS.mapsUrl,
@@ -114,6 +146,16 @@ export async function getSiteContent(): Promise<SiteContent> {
           facebookUrl: settingsRes.data.facebook_url ?? DEFAULT_SETTINGS.facebookUrl,
           airbnbUrl: settingsRes.data.airbnb_url ?? DEFAULT_SETTINGS.airbnbUrl,
           bookingUrl: settingsRes.data.booking_url ?? DEFAULT_SETTINGS.bookingUrl,
+          travelminitUrl: settingsRes.data.travelminit_url ?? DEFAULT_SETTINGS.travelminitUrl,
+          amenitiesTitle: settingsRes.data.amenities_title ?? DEFAULT_SETTINGS.amenitiesTitle,
+          amenitiesSubtitle: settingsRes.data.amenities_subtitle ?? DEFAULT_SETTINGS.amenitiesSubtitle,
+          galleryTitle: settingsRes.data.gallery_title ?? DEFAULT_SETTINGS.galleryTitle,
+          bookingTitle: settingsRes.data.booking_title ?? DEFAULT_SETTINGS.bookingTitle,
+          bookingSubtitle: settingsRes.data.booking_subtitle ?? DEFAULT_SETTINGS.bookingSubtitle,
+          pricingTitle: settingsRes.data.pricing_title ?? DEFAULT_SETTINGS.pricingTitle,
+          pricingSubtitle: settingsRes.data.pricing_subtitle ?? DEFAULT_SETTINGS.pricingSubtitle,
+          contactTitle: settingsRes.data.contact_title ?? DEFAULT_SETTINGS.contactTitle,
+          contactSubtitle: settingsRes.data.contact_subtitle ?? DEFAULT_SETTINGS.contactSubtitle,
           priceNormal: Number(settingsRes.data.price_normal ?? DEFAULT_SETTINGS.priceNormal),
           priceNormalLabel: settingsRes.data.price_normal_label ?? DEFAULT_SETTINGS.priceNormalLabel,
           priceNormalFeatures:

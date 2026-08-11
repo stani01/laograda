@@ -30,7 +30,7 @@ export function HeroSection({
         </span>
 
         <h1 className="max-w-2xl font-script text-6xl leading-tight sm:text-8xl">
-          LaOgradă
+          {settings.heroTitle}
         </h1>
 
         <p className="max-w-xl text-lg text-stone-200 sm:text-xl">{settings.heroSubtitle}</p>
@@ -43,7 +43,7 @@ export function HeroSection({
             render={
               <Link href="#rezervare">
                 <CalendarCheck className="size-5" aria-hidden />
-                Verifică disponibilitate
+                {settings.ctaPrimaryText}
               </Link>
             }
           />
@@ -52,7 +52,7 @@ export function HeroSection({
             variant="outline"
             className="h-12 border-stone-50/30 bg-transparent px-6 text-base text-stone-50 hover:bg-stone-50/10 hover:text-stone-50"
             nativeButton={false}
-            render={<Link href="#galerie">Vezi galeria foto</Link>}
+            render={<Link href="#galerie">{settings.ctaSecondaryText}</Link>}
           />
         </div>
       </div>

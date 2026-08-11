@@ -1,8 +1,9 @@
 /**
- * Merges busy-date ranges from the Booking.com and Airbnb iCal export feeds
- * so the booking calendar always reflects reservations made on either
- * platform. Each host adds their private "Sync Calendar" export URL to the
- * BOOKING_ICAL_URL / AIRBNB_ICAL_URL environment variables.
+ * Merges busy-date ranges from the Booking.com, Airbnb and Travelminit iCal
+ * export feeds so the booking calendar always reflects reservations made on
+ * any platform. Each host adds their private "Sync Calendar" export URL to
+ * the BOOKING_ICAL_URL / AIRBNB_ICAL_URL / TRAVELMINIT_ICAL_URL environment
+ * variables.
  */
 import ical from "node-ical";
 import type { BusyRange, BusySource } from "@/types/booking";
@@ -59,6 +60,7 @@ export async function getBusyRanges(): Promise<BusyRangesResult> {
   const sources: { url?: string; source: BusySource }[] = [
     { url: process.env.BOOKING_ICAL_URL, source: "booking" },
     { url: process.env.AIRBNB_ICAL_URL, source: "airbnb" },
+    { url: process.env.TRAVELMINIT_ICAL_URL, source: "travelminit" },
   ];
 
   const ranges: BusyRange[] = [];
