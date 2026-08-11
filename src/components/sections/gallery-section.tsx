@@ -3,7 +3,8 @@
 import { ImageIcon } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { LightboxImage } from "@/components/sections/lightbox-image";
 import type { GalleryImage, SiteSettings } from "@/lib/site-content";
 
 // Placeholder tiles shown until real photos are uploaded from /admin/galerie.
@@ -64,25 +65,9 @@ export function GallerySection({
                   showCloseButton
                   className="flex max-h-[90vh] items-center justify-center border-none bg-transparent p-0 shadow-none ring-0"
                 >
-                  <DialogClose
-                    render={
-                      <button
-                        type="button"
-                        aria-label="Micșorează poza"
-                        className="relative inline-block cursor-zoom-out overflow-hidden rounded-xl border border-white/15 leading-none shadow-2xl"
-                      />
-                    }
-                  >
-                    <Image
-                      src={image.url}
-                      alt={image.alt}
-                      width={1920}
-                      height={1440}
-                      quality={90}
-                      sizes="90vw"
-                      className="block h-auto max-h-[85vh] w-auto max-w-[90vw] object-contain"
-                    />
-                  </DialogClose>
+                  <div className="overflow-hidden rounded-xl border border-white/15 shadow-2xl">
+                    <LightboxImage src={image.url} alt={image.alt} />
+                  </div>
                 </DialogContent>
               </Dialog>
             ))}
