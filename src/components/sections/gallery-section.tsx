@@ -69,7 +69,7 @@ export function GallerySection({
                       <button
                         type="button"
                         aria-label="Micșorează poza"
-                        className="relative aspect-[4/3] max-h-[85vh] w-full cursor-zoom-out overflow-hidden rounded-xl sm:aspect-video"
+                        className="relative aspect-[4/3] max-h-[85vh] w-full cursor-zoom-out overflow-hidden rounded-xl border border-white/15 shadow-2xl sm:aspect-video"
                       />
                     }
                   >
