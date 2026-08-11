@@ -17,6 +17,7 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState(initialImages);
   const [alt, setAlt] = useState("");
+  const [selectedCount, setSelectedCount] = useState(0);
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
   const [reordering, setReordering] = useState(false);
@@ -49,6 +50,7 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
 
       setImages((prev) => [...prev, ...(data.images as GalleryImage[])]);
       setAlt("");
+      setSelectedCount(0);
       if (fileInputRef.current) fileInputRef.current.value = "";
       toast.success(
         data.images.length > 1 ? `${data.images.length} poze au fost adăugate.` : "Poza a fost adăugată."
@@ -125,13 +127,28 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
           <form onSubmit={handleUpload} className="flex flex-col gap-4 sm:flex-row sm:items-end">
             <div className="grid flex-1 gap-1.5">
               <Label htmlFor="gallery-file">Poze (jpg, png, webp — max 8MB fiecare, poți selecta mai multe)</Label>
-              <Input
-                id="gallery-file"
-                type="file"
-                accept="image/jpeg,image/png,image/webp,image/avif"
-                multiple
-                ref={fileInputRef}
-              />
+              <div className="flex items-center gap-3">
+                <label
+                  htmlFor="gallery-file"
+                  className="inline-flex h-8 shrink-0 cursor-pointer items-center rounded-lg border border-input bg-secondary px-3 text-sm font-medium text-secondary-foreground transition-colors hover:bg-[color-mix(in_oklch,var(--secondary),var(--foreground)_5%)]"
+                >
+                  Alege poze
+                </label>
+                <span className="truncate text-sm text-muted-foreground">
+                  {selectedCount === 0
+                    ? "Nicio poză selectată"
+                    : `${selectedCount} ${selectedCount === 1 ? "poză selectată" : "poze selectate"}`}
+                </span>
+                <input
+                  id="gallery-file"
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/avif"
+                  multiple
+                  ref={fileInputRef}
+                  onChange={(e) => setSelectedCount(e.target.files?.length ?? 0)}
+                  className="sr-only"
+                />
+              </div>
             </div>
             <div className="grid flex-1 gap-1.5">
               <Label htmlFor="gallery-alt">Descriere scurtă</Label>

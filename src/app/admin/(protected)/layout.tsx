@@ -10,6 +10,7 @@ const ADMIN_NAV = [
   { href: "/admin/rezervari", label: "Rezervări" },
   { href: "/admin/continut", label: "Conținut" },
   { href: "/admin/galerie", label: "Galerie" },
+  { href: "/admin/jurnal", label: "Jurnal" },
   { href: "/admin/cont", label: "Contul meu" },
 ];
 

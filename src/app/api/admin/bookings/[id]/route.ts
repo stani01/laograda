@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAdminAction } from "@/lib/admin-audit";
 
 const updateSchema = z.object({
   status: z.enum(["pending", "confirmed", "cancelled"]),
@@ -30,6 +31,14 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
   if (error) {
     return NextResponse.json({ error: "Eroare la actualizare" }, { status: 500 });
   }
+
+  await logAdminAction({
+    actorEmail: user.email ?? "necunoscut",
+    action: "booking.status_update",
+    entityType: "booking",
+    entityId: id,
+    details: { status: parsed.data.status },
+  });
 
   return NextResponse.json({ ok: true });
 }

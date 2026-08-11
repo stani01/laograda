@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAdminAction } from "@/lib/admin-audit";
 
 const MAX_FILE_SIZE = 8 * 1024 * 1024; // 8MB
 const MAX_FILES_PER_UPLOAD = 20;
@@ -89,6 +90,13 @@ export async function POST(request: NextRequest) {
     position: row.position,
   }));
 
+  await logAdminAction({
+    actorEmail: user.email ?? "necunoscut",
+    action: "gallery.upload",
+    entityType: "gallery_image",
+    details: { count: created.length, alt },
+  });
+
   return NextResponse.json({ images: created });
 }
 
@@ -120,6 +128,13 @@ export async function PATCH(request: NextRequest) {
   if (results.some((r) => r.error)) {
     return NextResponse.json({ error: "Eroare la salvarea ordinii" }, { status: 500 });
   }
+
+  await logAdminAction({
+    actorEmail: user.email ?? "necunoscut",
+    action: "gallery.reorder",
+    entityType: "gallery_image",
+    details: { count: parsed.data.order.length },
+  });
 
   return NextResponse.json({ ok: true });
 }

@@ -140,9 +140,27 @@ create table if not exists public.gallery_images (
   created_at timestamptz not null default now()
 );
 
+-- Audit log: who (email) did what (action) to which record, and when.
+-- Written by src/lib/admin-audit.ts from every admin mutation route; read
+-- by /admin/jurnal. Logging failures never block the actual admin action
+-- (see logAdminAction()'s try/catch), so this table can be empty/missing
+-- without breaking the rest of the admin panel.
+create table if not exists public.admin_audit_log (
+  id uuid primary key default gen_random_uuid(),
+  actor_email text not null,
+  action text not null,
+  entity_type text,
+  entity_id text,
+  details jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists admin_audit_log_created_at_idx on public.admin_audit_log (created_at desc);
+
 alter table public.site_settings enable row level security;
 alter table public.amenities enable row level security;
 alter table public.gallery_images enable row level security;
+alter table public.admin_audit_log enable row level security;
 
 -- Public Storage bucket for gallery photos, managed from the admin panel.
 insert into storage.buckets (id, name, public)

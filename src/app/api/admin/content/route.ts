@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAdminAction } from "@/lib/admin-audit";
 import { AMENITY_ICON_KEYS } from "@/lib/amenity-icons";
 
 const contentSchema = z.object({
@@ -130,6 +131,13 @@ export async function PUT(request: Request) {
       return NextResponse.json({ error: "Eroare la salvarea facilităților" }, { status: 500 });
     }
   }
+
+  await logAdminAction({
+    actorEmail: user.email ?? "necunoscut",
+    action: "content.update",
+    entityType: "site_settings",
+    details: { amenitiesCount: amenities.length },
+  });
 
   return NextResponse.json({ ok: true });
 }

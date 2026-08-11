@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdminUser } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { logAdminAction } from "@/lib/admin-audit";
 
 export async function DELETE(
   _request: Request,
@@ -31,6 +32,13 @@ export async function DELETE(
   if (deleteError) {
     return NextResponse.json({ error: "Ștergerea a eșuat" }, { status: 500 });
   }
+
+  await logAdminAction({
+    actorEmail: user.email ?? "necunoscut",
+    action: "gallery.delete",
+    entityType: "gallery_image",
+    entityId: id,
+  });
 
   return NextResponse.json({ ok: true });
 }
