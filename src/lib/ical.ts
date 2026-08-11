@@ -1,9 +1,12 @@
 /**
- * Merges busy-date ranges from the Booking.com, Airbnb and Travelminit iCal
- * export feeds so the booking calendar always reflects reservations made on
- * any platform. Each host adds their private "Sync Calendar" export URL to
- * the BOOKING_ICAL_URL / AIRBNB_ICAL_URL / TRAVELMINIT_ICAL_URL environment
- * variables.
+ * Merges busy-date ranges from the Booking.com, Airbnb, Travelminit and
+ * shared-iCloud iCal feeds so the booking calendar always reflects
+ * reservations made anywhere — including WhatsApp bookings the owners log
+ * only in their shared iCloud calendar, not through this site. Each host
+ * adds their private "Sync Calendar" export URL to the BOOKING_ICAL_URL /
+ * AIRBNB_ICAL_URL / TRAVELMINIT_ICAL_URL / ICLOUD_ICAL_URL environment
+ * variables. iCloud's "Public Calendar" share link starts with `webcal://`
+ * — swap that prefix for `https://` before putting it in ICLOUD_ICAL_URL.
  */
 import ical from "node-ical";
 import type { BusyRange, BusySource } from "@/types/booking";
@@ -61,6 +64,7 @@ export async function getBusyRanges(): Promise<BusyRangesResult> {
     { url: process.env.BOOKING_ICAL_URL, source: "booking" },
     { url: process.env.AIRBNB_ICAL_URL, source: "airbnb" },
     { url: process.env.TRAVELMINIT_ICAL_URL, source: "travelminit" },
+    { url: process.env.ICLOUD_ICAL_URL, source: "icloud" },
   ];
 
   const ranges: BusyRange[] = [];
