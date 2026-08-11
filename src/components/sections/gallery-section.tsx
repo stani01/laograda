@@ -1,9 +1,9 @@
 "use client";
 
-import { ImageIcon } from "lucide-react";
+import { ImageIcon, X } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { LightboxImage } from "@/components/sections/lightbox-image";
 import type { GalleryImage, SiteSettings } from "@/lib/site-content";
 
@@ -62,12 +62,21 @@ export function GallerySection({
                   }
                 />
                 <DialogContent
-                  showCloseButton
-                  className="flex max-h-[90vh] items-center justify-center border-none bg-transparent p-0 shadow-none ring-0"
+                  showCloseButton={false}
+                  className="inset-0 top-0 left-0 h-dvh w-screen max-w-none translate-x-0 translate-y-0 rounded-none border-none bg-black p-0 shadow-none ring-0"
                 >
-                  <div className="overflow-hidden rounded-xl border border-white/15 shadow-2xl">
-                    <LightboxImage src={image.url} alt={image.alt} />
-                  </div>
+                  <LightboxImage src={image.url} alt={image.alt} />
+                  <DialogClose
+                    render={
+                      <button
+                        type="button"
+                        aria-label="Închide"
+                        className="absolute top-4 right-4 z-10 flex size-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70"
+                      />
+                    }
+                  >
+                    <X className="size-6" aria-hidden />
+                  </DialogClose>
                 </DialogContent>
               </Dialog>
             ))}

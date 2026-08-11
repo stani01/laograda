@@ -11,6 +11,11 @@
  * the page) — once zoom/pan is interactive, a tap on the photo needs to
  * manipulate it, not dismiss it. Clicking the backdrop or the explicit
  * close button still closes the lightbox as before.
+ *
+ * Expects to be rendered inside a full-screen (h-dvh w-screen) DialogContent
+ * — fills that container edge-to-edge so the photo displays as large as
+ * possible and the pinch/pan gesture surface spans the whole screen, not
+ * just the photo's own (possibly small) rendered box.
  */
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -105,7 +110,7 @@ export function LightboxImage({ src, alt }: { src: string; alt: string }) {
 
   return (
     <div
-      className="relative flex max-h-[85vh] max-w-[90vw] touch-none items-center justify-center overscroll-contain"
+      className="relative flex h-full w-full touch-none items-center justify-center overflow-hidden overscroll-contain select-none"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -113,21 +118,24 @@ export function LightboxImage({ src, alt }: { src: string; alt: string }) {
       onDoubleClick={onDoubleClick}
       onWheel={onWheel}
     >
-      <Image
-        src={src}
-        alt={alt}
-        width={1920}
-        height={1440}
-        quality={90}
-        sizes="90vw"
-        draggable={false}
-        className="block h-auto max-h-[85vh] w-auto max-w-[90vw] touch-none select-none object-contain"
+      <div
+        className="relative h-full w-full"
         style={{
           transform: `translate(${translate.x}px, ${translate.y}px) scale(${scale})`,
           transition: isGesturing ? "none" : "transform 150ms ease-out",
           cursor: scale > 1 ? "grab" : "zoom-in",
         }}
-      />
+      >
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          quality={90}
+          sizes="100vw"
+          draggable={false}
+          className="touch-none object-contain select-none"
+        />
+      </div>
     </div>
   );
 }
