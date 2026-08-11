@@ -53,8 +53,9 @@ export function GallerySection({
                         src={image.url}
                         alt={image.alt}
                         fill
+                        sizes="(min-width: 640px) 33vw, 50vw"
+                        quality={85}
                         className="object-cover transition-transform duration-300 group-hover:scale-105"
-                        unoptimized
                       />
                     </button>
                   }
@@ -77,7 +78,7 @@ export function GallerySection({
                       alt={image.alt}
                       fill
                       className="object-contain"
-                      unoptimized
+                      quality={90}
                       sizes="90vw"
                     />
                   </DialogClose>

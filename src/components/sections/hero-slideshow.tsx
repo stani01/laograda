@@ -30,7 +30,8 @@ export function HeroSlideshow({ images }: { images: GalleryImage[] }) {
           alt={image.alt}
           fill
           priority={index === 0}
-          unoptimized
+          quality={90}
+          sizes="100vw"
           className={`object-cover transition-opacity duration-1000 ease-in-out ${
             index === activeIndex ? "opacity-100" : "opacity-0"
           }`}

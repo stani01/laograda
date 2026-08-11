@@ -180,7 +180,7 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
               dragOverId === image.id && draggedId !== image.id && "ring-2"
             )}
           >
-            <Image src={image.url} alt={image.alt} fill className="object-cover" unoptimized />
+            <Image src={image.url} alt={image.alt} fill sizes="(min-width: 640px) 25vw, 50vw" className="object-cover" />
 
             <div
               className="absolute top-2 left-2 flex size-7 cursor-grab items-center justify-center rounded-md bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
