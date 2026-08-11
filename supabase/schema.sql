@@ -1,4 +1,4 @@
--- La Ograda — schema inițial Supabase (Postgres)
+-- LaOgrada — schema inițial Supabase (Postgres)
 -- Rulează acest fișier în Supabase Studio > SQL Editor (sau via `supabase db push`).
 
 create extension if not exists "pgcrypto";
@@ -32,11 +32,41 @@ create table if not exists public.contact_messages (
   created_at timestamptz not null default now()
 );
 
+-- Guest accommodation registration form ("fișă de cazare") — guests fill
+-- this in themselves via a public link before/at arrival. NOT a replacement
+-- for Romania's mandatory e-cazare.mai.gov.ro reporting for foreign
+-- nationals — that's a separate legal obligation the owners still have to
+-- handle directly with IGI. This just gives them a digital record they can
+-- view/print from /admin instead of a paper form, since this project has
+-- no email service to forward submissions with.
+create table if not exists public.guest_registration_forms (
+  id uuid primary key default gen_random_uuid(),
+  full_name text not null,
+  document_type text not null default 'CI' check (document_type in ('CI', 'pasaport')),
+  document_series text,
+  document_number text not null,
+  nationality text not null default 'Română',
+  birth_date date,
+  address text not null,
+  phone text not null,
+  email text,
+  check_in date not null,
+  check_out date not null,
+  guests_count integer not null default 1,
+  additional_guests text,
+  purpose text not null default 'Turism',
+  gdpr_consent boolean not null default false,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists guest_registration_forms_created_at_idx on public.guest_registration_forms (created_at desc);
+
 -- Row Level Security: no public read/write. All access goes through Route
 -- Handlers using the service role key (see src/lib/supabase/admin.ts), which
 -- validates input with zod before touching the database.
 alter table public.bookings enable row level security;
 alter table public.contact_messages enable row level security;
+alter table public.guest_registration_forms enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- Admin-editable site content (managed from /admin by the owners)

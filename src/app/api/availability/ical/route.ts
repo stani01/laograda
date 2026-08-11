@@ -68,7 +68,7 @@ export async function GET(request: NextRequest) {
 
     const siteEvents = (data ?? []).map((row) => {
       const summary = escapeIcsText(
-        row.status === "pending" ? "Ocupat (în așteptare) — La Ograda" : "Ocupat — La Ograda"
+        row.status === "pending" ? "Ocupat (în așteptare) — LaOgrada" : "Ocupat — LaOgrada"
       );
 
       return [
@@ -109,10 +109,10 @@ export async function GET(request: NextRequest) {
   const ics = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//La Ograda//Booking Sync//RO",
+    "PRODID:-//LaOgrada//Booking Sync//RO",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
-    "X-WR-CALNAME:La Ograda — rezervări site",
+    "X-WR-CALNAME:LaOgrada — rezervări site",
     events,
     "END:VCALENDAR",
   ]

@@ -10,7 +10,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         <div>
           <div className="flex items-center gap-2 font-script text-2xl">
             <Mountain className="size-5 text-primary" aria-hidden />
-            La Ograda
+            LaOgrada
           </div>
           <p className="mt-3 max-w-xs text-sm text-muted-foreground">{settings.aboutText}</p>
         </div>
@@ -124,7 +124,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       </div>
 
       <div className="border-t border-border/60 py-4 text-center text-xs text-muted-foreground">
-        © {year} La Ograda. Toate drepturile rezervate.
+        © {year} LaOgrada. Toate drepturile rezervate.
       </div>
     </footer>
   );

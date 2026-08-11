@@ -10,6 +10,7 @@ const ADMIN_NAV = [
   { href: "/admin/rezervari", label: "Rezervări" },
   { href: "/admin/continut", label: "Conținut" },
   { href: "/admin/galerie", label: "Galerie" },
+  { href: "/admin/fise-cazare", label: "Fișe cazare" },
   { href: "/admin/jurnal", label: "Jurnal" },
   { href: "/admin/cont", label: "Contul meu" },
 ];
@@ -22,8 +23,8 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   }
 
   return (
-    <div className="min-h-screen bg-muted/30">
-      <header className="border-b border-border/60 bg-background">
+    <div className="min-h-screen bg-muted/30 print:bg-white">
+      <header className="border-b border-border/60 bg-background print:hidden">
         <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
           <div className="flex items-center gap-6">
             <Link href="/admin" className="flex items-center gap-2 font-heading text-lg font-semibold">

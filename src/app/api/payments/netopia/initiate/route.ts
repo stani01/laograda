@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
       orderId: booking.id,
       amount: booking.total_amount,
       currency: booking.currency ?? "RON",
-      description: `Rezervare La Ograda (${booking.check_in} → ${booking.check_out})`,
+      description: `Rezervare LaOgrada (${booking.check_in} → ${booking.check_out})`,
       billing: {
         email: booking.email,
         phone: booking.phone,

@@ -18,7 +18,7 @@ function getClient(): Resend | null {
   return client;
 }
 
-const FROM = process.env.EMAIL_FROM ?? "La Ograda <onboarding@resend.dev>";
+const FROM = process.env.EMAIL_FROM ?? "LaOgrada <onboarding@resend.dev>";
 const OWNER_EMAIL = process.env.CONTACT_EMAIL_TO;
 
 export async function sendBookingRequestEmails(
@@ -39,7 +39,7 @@ export async function sendBookingRequestEmails(
         replyTo: booking.email,
         subject: `Cerere nouă de rezervare — ${booking.name}`,
         text: [
-          `Cerere de rezervare nouă pentru La Ograda (#${booking.id})`,
+          `Cerere de rezervare nouă pentru LaOgrada (#${booking.id})`,
           "",
           `Perioadă: ${summary}`,
           `Nume: ${booking.name}`,
@@ -57,14 +57,14 @@ export async function sendBookingRequestEmails(
     resend.emails.send({
       from: FROM,
       to: booking.email,
-      subject: "Am primit cererea ta de rezervare — La Ograda",
+      subject: "Am primit cererea ta de rezervare — LaOgrada",
       text: [
         `Bună, ${booking.name}!`,
         "",
         `Am primit cererea ta de rezervare pentru perioada ${summary}.`,
         "Te contactăm în curând pentru confirmare și pentru pasul de plată.",
         "",
-        "La Ograda",
+        "LaOgrada",
       ].join("\n"),
     })
   );

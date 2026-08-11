@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
-import { Loader2, Mail, Phone } from "lucide-react";
+import { Loader2, Mail, MessageCircle, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -65,6 +65,21 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
               <a href={`mailto:${settings.email}`} className="hover:underline">{settings.email}</a>
             </li>
           </ul>
+
+          <Button
+            className="mt-6 bg-[#25D366] text-white hover:bg-[#1ea952]"
+            nativeButton={false}
+            render={
+              <a
+                href={`https://wa.me/${settings.phone.replace(/\D/g, "")}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <MessageCircle className="size-5" aria-hidden />
+                Scrie-ne pe WhatsApp
+              </a>
+            }
+          />
         </div>
 
         <Card>

@@ -30,7 +30,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
       <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
         <Link href="#top" className="flex items-center gap-2 font-script text-2xl tracking-tight">
           <Mountain className="size-5 text-primary" aria-hidden />
-          La Ograda
+          LaOgrada
         </Link>
 
         <nav className="hidden items-center gap-6 text-sm font-medium text-muted-foreground md:flex">
@@ -59,7 +59,7 @@ export function SiteHeader({ settings }: { settings: SiteSettings }) {
           />
           <SheetContent side="right" className="w-64">
             <SheetHeader>
-              <SheetTitle>La Ograda</SheetTitle>
+              <SheetTitle>LaOgrada</SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1 px-4">
               {NAV_LINKS.map((link) => (

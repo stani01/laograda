@@ -32,13 +32,13 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "La Ograda — cazare în natură",
-    template: "%s · La Ograda",
+    default: "LaOgrada — cazare în natură",
+    template: "%s · LaOgrada",
   },
   description:
-    "La Ograda — cazare confortabilă în natură. Verifică disponibilitatea sincronizată cu Booking.com și Airbnb și rezervă direct.",
+    "LaOgrada — cazare confortabilă în natură. Verifică disponibilitatea sincronizată cu Booking.com și Airbnb și rezervă direct.",
   openGraph: {
-    title: "La Ograda",
+    title: "LaOgrada",
     description:
       "Cazare confortabilă în natură. Disponibilitate sincronizată cu Booking.com și Airbnb.",
     locale: "ro_RO",

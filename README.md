@@ -1,6 +1,6 @@
-# La Ograda
+# LaOgrada
 
-Site de prezentare și rezervări pentru **La Ograda**, cu disponibilitate
+Site de prezentare și rezervări pentru **LaOgrada**, cu disponibilitate
 sincronizată automat din Booking.com și Airbnb (import iCal) și plăți online
 prin NETOPIA (activare ulterioară, după deschiderea contului de comerciant).
 
