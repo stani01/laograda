@@ -302,22 +302,23 @@ insert into storage.buckets (id, name, public)
 values ('gallery', 'gallery', true)
 on conflict (id) do nothing;
 
+-- Only public READ access is granted here. Uploads/deletes are done from
+-- /api/admin/gallery using the service-role key (which bypasses RLS
+-- entirely, see src/lib/supabase/admin.ts), after requireAdminUser() checks
+-- the ADMIN_EMAILS allow-list — the browser never talks to Storage directly.
+-- Deliberately NOT granting insert/delete to the generic "authenticated"
+-- role: if this Supabase project ever has public sign-ups enabled, that
+-- would let ANY signed-up visitor (not just the admin) upload/delete gallery
+-- photos directly via the Storage API, bypassing the admin check entirely.
 -- `drop ... if exists` first makes this script safe to re-run from scratch
--- (Postgres has no `create policy if not exists`).
+-- (Postgres has no `create policy if not exists`), and also cleans up the
+-- old, wider "authenticated" policies from earlier versions of this script.
 drop policy if exists "Public read access for gallery photos" on storage.objects;
 create policy "Public read access for gallery photos"
 on storage.objects for select
 using (bucket_id = 'gallery');
 
 drop policy if exists "Authenticated users can upload gallery photos" on storage.objects;
-create policy "Authenticated users can upload gallery photos"
-on storage.objects for insert
-to authenticated
-with check (bucket_id = 'gallery');
-
 drop policy if exists "Authenticated users can delete gallery photos" on storage.objects;
-create policy "Authenticated users can delete gallery photos"
-on storage.objects for delete
-to authenticated
-using (bucket_id = 'gallery');
+
 

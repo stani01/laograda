@@ -3,8 +3,13 @@ import { guestRegistrationSchema, type StandardFieldConfig } from "@/types/guest
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGuestRegistrationFieldDefs } from "@/lib/guest-registration-fields";
 import { getGuestRegistrationStandardFields } from "@/lib/guest-registration-standard-fields";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  if (!checkRateLimit(request, "guest-registration", { limit: 5, windowMs: 60_000 })) {
+    return NextResponse.json({ error: "Prea multe cereri. Te rugăm încearcă din nou peste un minut." }, { status: 429 });
+  }
+
   const json = await request.json().catch(() => null);
   const parsed = guestRegistrationSchema.safeParse(json);
 

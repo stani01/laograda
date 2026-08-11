@@ -3,6 +3,7 @@ import { bookingRequestSchema } from "@/types/booking";
 import { getBusyRanges } from "@/lib/ical";
 import { sendBookingRequestEmails } from "@/lib/resend";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 /** Do two [start, end) date ranges (as ISO strings) overlap? */
 function rangesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: string) {
@@ -10,6 +11,10 @@ function rangesOverlap(aStart: string, aEnd: string, bStart: string, bEnd: strin
 }
 
 export async function POST(request: NextRequest) {
+  if (!checkRateLimit(request, "bookings", { limit: 5, windowMs: 60_000 })) {
+    return NextResponse.json({ error: "Prea multe cereri. Te rugăm încearcă din nou peste un minut." }, { status: 429 });
+  }
+
   const json = await request.json().catch(() => null);
   const parsed = bookingRequestSchema.safeParse(json);
 

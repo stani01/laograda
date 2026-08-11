@@ -18,6 +18,7 @@
  * give us. No guest PII (name/email/phone) is included, only date ranges.
  */
 import { NextResponse, type NextRequest } from "next/server";
+import { timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getBusyRanges } from "@/lib/ical";
 import type { BusySource } from "@/types/booking";
@@ -37,13 +38,22 @@ function escapeIcsText(text: string): string {
   return text.replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,");
 }
 
+/** Constant-time string comparison — avoids leaking the secret's contents via response-timing differences. */
+function safeEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  if (bufA.length !== bufB.length) return false;
+  return timingSafeEqual(bufA, bufB);
+}
+
 export async function GET(request: NextRequest) {
   const expectedToken = process.env.ICAL_EXPORT_SECRET?.trim();
   const token = request.nextUrl.searchParams.get("token")?.trim();
 
-  if (!expectedToken || !token || token !== expectedToken) {
+  if (!expectedToken || !token || !safeEqual(token, expectedToken)) {
     return NextResponse.json({ error: "Neautorizat" }, { status: 401 });
   }
+
 
   const excluded = new Set(
     (request.nextUrl.searchParams.get("exclude") ?? "")

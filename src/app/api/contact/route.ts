@@ -1,8 +1,13 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { contactMessageSchema } from "@/types/booking";
 import { sendContactMessageEmail } from "@/lib/resend";
+import { checkRateLimit } from "@/lib/rate-limit";
 
 export async function POST(request: NextRequest) {
+  if (!checkRateLimit(request, "contact", { limit: 5, windowMs: 60_000 })) {
+    return NextResponse.json({ error: "Prea multe cereri. Te rugăm încearcă din nou peste un minut." }, { status: 429 });
+  }
+
   const json = await request.json().catch(() => null);
   const parsed = contactMessageSchema.safeParse(json);
 
