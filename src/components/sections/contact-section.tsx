@@ -9,8 +9,10 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import type { SiteSettings } from "@/lib/site-content";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
-export function ContactSection({ settings }: { settings: SiteSettings }) {
+export function ContactSection({ settings, locale }: { settings: SiteSettings; locale: Locale }) {
+  const t = getDictionary(locale);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -32,17 +34,17 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error ?? "A apărut o eroare. Încearcă din nou.");
+        toast.error(data.error ?? t.contact.errorGeneric);
         return;
       }
 
-      toast.success("Mesajul a fost trimis! Îți răspundem cât mai curând.");
+      toast.success(t.contact.successToast);
       setName("");
       setEmail("");
       setPhone("");
       setMessage("");
     } catch {
-      toast.error("A apărut o eroare de rețea. Încearcă din nou.");
+      toast.error(t.contact.networkError);
     } finally {
       setSubmitting(false);
     }
@@ -76,7 +78,7 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
                 rel="noopener noreferrer"
               >
                 <MessageCircle className="size-5" aria-hidden />
-                Scrie-ne pe WhatsApp
+                {t.contact.whatsapp}
               </a>
             }
           />
@@ -87,22 +89,22 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="grid gap-1.5">
-                  <Label htmlFor="contact-name">Nume</Label>
+                  <Label htmlFor="contact-name">{t.contact.name}</Label>
                   <Input id="contact-name" required value={name} onChange={(e) => setName(e.target.value)} />
                 </div>
                 <div className="grid gap-1.5">
-                  <Label htmlFor="contact-phone">Telefon (opțional)</Label>
+                  <Label htmlFor="contact-phone">{t.contact.phoneOptional}</Label>
                   <Input id="contact-phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} />
                 </div>
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="contact-email">Email</Label>
+                <Label htmlFor="contact-email">{t.contact.email}</Label>
                 <Input id="contact-email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
               </div>
 
               <div className="grid gap-1.5">
-                <Label htmlFor="contact-message">Mesaj</Label>
+                <Label htmlFor="contact-message">{t.contact.message}</Label>
                 <Textarea id="contact-message" required rows={4} value={message} onChange={(e) => setMessage(e.target.value)} />
               </div>
 
@@ -113,7 +115,7 @@ export function ContactSection({ settings }: { settings: SiteSettings }) {
 
               <Button type="submit" disabled={submitting} className="mt-2">
                 {submitting && <Loader2 className="size-4 animate-spin" aria-hidden />}
-                Trimite mesajul
+                {t.contact.submit}
               </Button>
             </form>
           </CardContent>

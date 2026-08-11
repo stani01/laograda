@@ -56,8 +56,33 @@ create table if not exists public.guest_registration_forms (
   additional_guests text,
   purpose text not null default 'Turism',
   gdpr_consent boolean not null default false,
+  locale text not null default 'ro' check (locale in ('ro', 'en')),
+  -- Snapshot of admin-defined extra field answers at submission time:
+  -- [{ key, label, value }, ...]. Stored as a snapshot (not re-joined
+  -- against guest_registration_field_defs) so admin can still read old
+  -- submissions correctly even after the field definitions change later.
+  custom_fields jsonb not null default '[]'::jsonb,
   created_at timestamptz not null default now()
 );
+
+-- If guest_registration_forms already existed before `custom_fields` was added:
+alter table public.guest_registration_forms add column if not exists custom_fields jsonb not null default '[]'::jsonb;
+
+-- Admin-defined extra fields shown on the public /fisa-cazare and
+-- /guest-registration forms, alongside the fixed core fields above — lets
+-- the owners add whatever extra questions they need without a code change.
+create table if not exists public.guest_registration_field_defs (
+  id uuid primary key default gen_random_uuid(),
+  field_key text not null unique,
+  label text not null,
+  label_en text not null default '',
+  field_type text not null default 'text' check (field_type in ('text', 'textarea', 'number', 'date', 'checkbox')),
+  required boolean not null default false,
+  position integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists guest_registration_field_defs_position_idx on public.guest_registration_field_defs (position);
 
 create index if not exists guest_registration_forms_created_at_idx on public.guest_registration_forms (created_at desc);
 
@@ -67,6 +92,7 @@ create index if not exists guest_registration_forms_created_at_idx on public.gue
 alter table public.bookings enable row level security;
 alter table public.contact_messages enable row level security;
 alter table public.guest_registration_forms enable row level security;
+alter table public.guest_registration_field_defs enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- Admin-editable site content (managed from /admin by the owners)
@@ -113,6 +139,29 @@ Foc de tabără & lemne incluse',
   price_long_stay_features text not null default 'Preț redus pentru șederi lungi
 Curent, apă, Wi-Fi incluse
 Curățenie inclusă',
+  -- English translations of the fields above. All nullable/no default: the
+  -- public site falls back to the Romanian text (see src/lib/site-content.ts)
+  -- whenever the English version hasn't been filled in yet from /admin.
+  hero_title_en text,
+  hero_subtitle_en text,
+  cta_primary_text_en text,
+  cta_secondary_text_en text,
+  about_text_en text,
+  amenities_title_en text,
+  amenities_subtitle_en text,
+  gallery_title_en text,
+  booking_title_en text,
+  booking_subtitle_en text,
+  pricing_title_en text,
+  pricing_subtitle_en text,
+  contact_title_en text,
+  contact_subtitle_en text,
+  price_normal_label_en text,
+  price_normal_features_en text,
+  price_weekend_label_en text,
+  price_weekend_features_en text,
+  price_long_stay_label_en text,
+  price_long_stay_features_en text,
   updated_at timestamptz not null default now(),
   constraint site_settings_singleton check (id = 1)
 );
@@ -150,6 +199,29 @@ alter table public.site_settings add column if not exists price_long_stay_label 
 alter table public.site_settings add column if not exists price_long_stay_features text not null default 'Preț redus pentru șederi lungi
 Curent, apă, Wi-Fi incluse
 Curățenie inclusă';
+alter table public.site_settings add column if not exists hero_title_en text;
+alter table public.site_settings add column if not exists hero_subtitle_en text;
+alter table public.site_settings add column if not exists cta_primary_text_en text;
+alter table public.site_settings add column if not exists cta_secondary_text_en text;
+alter table public.site_settings add column if not exists about_text_en text;
+alter table public.site_settings add column if not exists amenities_title_en text;
+alter table public.site_settings add column if not exists amenities_subtitle_en text;
+alter table public.site_settings add column if not exists gallery_title_en text;
+alter table public.site_settings add column if not exists booking_title_en text;
+alter table public.site_settings add column if not exists booking_subtitle_en text;
+alter table public.site_settings add column if not exists pricing_title_en text;
+alter table public.site_settings add column if not exists pricing_subtitle_en text;
+alter table public.site_settings add column if not exists contact_title_en text;
+alter table public.site_settings add column if not exists contact_subtitle_en text;
+alter table public.site_settings add column if not exists price_normal_label_en text;
+alter table public.site_settings add column if not exists price_normal_features_en text;
+alter table public.site_settings add column if not exists price_weekend_label_en text;
+alter table public.site_settings add column if not exists price_weekend_features_en text;
+alter table public.site_settings add column if not exists price_long_stay_label_en text;
+alter table public.site_settings add column if not exists price_long_stay_features_en text;
+
+-- If guest_registration_forms already existed before `locale` was added:
+alter table public.guest_registration_forms add column if not exists locale text not null default 'ro' check (locale in ('ro', 'en'));
 
 -- `icon` is a key into the fixed icon registry in src/lib/amenity-icons.ts,
 -- not a free-form value, so the admin panel can render a matching lucide icon.
@@ -157,9 +229,13 @@ create table if not exists public.amenities (
   id uuid primary key default gen_random_uuid(),
   icon text not null default 'sparkles',
   label text not null,
+  label_en text,
   position integer not null default 0,
   created_at timestamptz not null default now()
 );
+
+-- If amenities already existed before `label_en` was added:
+alter table public.amenities add column if not exists label_en text;
 
 -- `storage_path` is the object path inside the public "gallery" Storage bucket.
 create table if not exists public.gallery_images (

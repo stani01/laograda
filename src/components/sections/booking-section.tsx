@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { toast } from "sonner";
 import type { DateRange } from "react-day-picker";
-import { ro } from "date-fns/locale";
+import { ro, enUS } from "date-fns/locale";
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 import type { BusyRange } from "@/types/booking";
 import type { SiteSettings } from "@/lib/site-content";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 function toIsoDate(date: Date): string {
   return date.toISOString().slice(0, 10);
@@ -34,7 +35,8 @@ function useDisabledDays(busy: BusyRange[]) {
   }, [busy]);
 }
 
-export function BookingSection({ settings }: { settings: SiteSettings }) {
+export function BookingSection({ settings, locale }: { settings: SiteSettings; locale: Locale }) {
+  const t = getDictionary(locale);
   const [busy, setBusy] = useState<BusyRange[]>([]);
   const [loadingAvailability, setLoadingAvailability] = useState(true);
   const [range, setRange] = useState<DateRange | undefined>();
@@ -55,7 +57,7 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
         if (!cancelled) setBusy(data.busy ?? []);
       })
       .catch(() => {
-        if (!cancelled) toast.error("Nu am putut încărca disponibilitatea calendarului.");
+        if (!cancelled) toast.error(t.booking.loadAvailabilityError);
       })
       .finally(() => {
         if (!cancelled) setLoadingAvailability(false);
@@ -72,7 +74,7 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
     e.preventDefault();
 
     if (!range?.from || !range?.to) {
-      toast.error("Selectează perioada dorită în calendar.");
+      toast.error(t.booking.selectRangeError);
       return;
     }
 
@@ -96,18 +98,18 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
       const data = await res.json();
 
       if (!res.ok) {
-        toast.error(data.error ?? "A apărut o eroare. Încearcă din nou.");
+        toast.error(data.error ?? t.booking.errorGeneric);
         return;
       }
 
-      toast.success("Cererea de rezervare a fost trimisă! Te contactăm în curând.");
+      toast.success(t.booking.successToast);
       setRange(undefined);
       setName("");
       setEmail("");
       setPhone("");
       setMessage("");
     } catch {
-      toast.error("A apărut o eroare de rețea. Încearcă din nou.");
+      toast.error(t.booking.networkError);
     } finally {
       setSubmitting(false);
     }
@@ -132,13 +134,13 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
                 selected={range}
                 onSelect={setRange}
                 disabled={[{ before: new Date() }, ...disabledDays]}
-                locale={ro}
+                locale={locale === "en" ? enUS : ro}
                 className="w-full"
               />
               {loadingAvailability && (
                 <p className="flex items-center gap-2 text-xs text-muted-foreground">
                   <Loader2 className="size-3 animate-spin" aria-hidden />
-                  Se încarcă disponibilitatea din Booking & Airbnb...
+                  {t.booking.loadingAvailability}
                 </p>
               )}
             </CardContent>
@@ -149,11 +151,11 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
               <form onSubmit={handleSubmit} className="flex flex-col gap-4">
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-1.5">
-                    <Label htmlFor="name">Nume complet</Label>
+                    <Label htmlFor="name">{t.booking.fullName}</Label>
                     <Input id="name" required value={name} onChange={(e) => setName(e.target.value)} />
                   </div>
                   <div className="grid gap-1.5">
-                    <Label htmlFor="guests">Număr persoane (max. 7)</Label>
+                    <Label htmlFor="guests">{t.booking.guests}</Label>
                     <Input
                       id="guests"
                       type="number"
@@ -168,17 +170,17 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div className="grid gap-1.5">
-                    <Label htmlFor="email">Email</Label>
+                    <Label htmlFor="email">{t.booking.email}</Label>
                     <Input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} />
                   </div>
                   <div className="grid gap-1.5">
-                    <Label htmlFor="phone">Telefon</Label>
+                    <Label htmlFor="phone">{t.booking.phone}</Label>
                     <Input id="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} />
                   </div>
                 </div>
 
                 <div className="grid gap-1.5">
-                  <Label htmlFor="message">Mesaj (opțional)</Label>
+                  <Label htmlFor="message">{t.booking.message}</Label>
                   <Textarea id="message" value={message} onChange={(e) => setMessage(e.target.value)} rows={3} />
                 </div>
 
@@ -190,13 +192,13 @@ export function BookingSection({ settings }: { settings: SiteSettings }) {
 
                 <p className="text-xs text-muted-foreground">
                   {range?.from && range?.to
-                    ? `Perioadă selectată: ${toIsoDate(range.from)} → ${toIsoDate(range.to)}`
-                    : "Selectează perioada în calendar înainte de a trimite cererea."}
+                    ? `${t.booking.selectedPeriod}: ${toIsoDate(range.from)} → ${toIsoDate(range.to)}`
+                    : t.booking.selectPeriodHint}
                 </p>
 
                 <Button type="submit" disabled={submitting} className="mt-2">
                   {submitting && <Loader2 className="size-4 animate-spin" aria-hidden />}
-                  Trimite cererea de rezervare
+                  {t.booking.submit}
                 </Button>
               </form>
             </CardContent>

@@ -6,22 +6,22 @@ import { PricingSection } from "@/components/sections/pricing-section";
 import { ContactSection } from "@/components/sections/contact-section";
 import { getSiteContent } from "@/lib/site-content";
 
-// Re-fetch admin-edited content at most once a minute, so changes made in
-// /admin show up on the live site without needing a new deploy.
+// English mirror of src/app/(site)/page.tsx — same sections, resolved for
+// the "en" locale. Kept as a separate page (rather than a [locale] dynamic
+// segment) so the existing Romanian URLs never change.
 export const revalidate = 60;
 
-export default async function Home() {
-  const { settings, amenities, gallery } = await getSiteContent("ro");
+export default async function EnglishHome() {
+  const { settings, amenities, gallery } = await getSiteContent("en");
 
   return (
     <>
       <HeroSection settings={settings} images={gallery} />
       <AmenitiesSection settings={settings} amenities={amenities} />
-      <GallerySection settings={settings} images={gallery} locale="ro" />
-      <BookingSection settings={settings} locale="ro" />
-      <PricingSection settings={settings} locale="ro" />
-      <ContactSection settings={settings} locale="ro" />
+      <GallerySection settings={settings} images={gallery} locale="en" />
+      <BookingSection settings={settings} locale="en" />
+      <PricingSection settings={settings} locale="en" />
+      <ContactSection settings={settings} locale="en" />
     </>
   );
 }
-

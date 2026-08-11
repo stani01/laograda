@@ -7,13 +7,13 @@ import { getSiteContent } from "@/lib/site-content";
 export const revalidate = 60;
 
 export default async function SiteLayout({ children }: { children: React.ReactNode }) {
-  const { settings } = await getSiteContent();
+  const { settings } = await getSiteContent("ro");
 
   return (
     <>
-      <SiteHeader settings={settings} />
+      <SiteHeader settings={settings} locale="ro" />
       <main className="flex-1">{children}</main>
-      <SiteFooter settings={settings} />
+      <SiteFooter settings={settings} locale="ro" />
     </>
   );
 }

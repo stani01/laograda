@@ -10,6 +10,8 @@ const ACTION_LABELS: Record<string, string> = {
   "gallery.delete": "Poză ștearsă",
   "gallery.reorder": "Ordine poze schimbată",
   "booking.status_update": "Status rezervare schimbat",
+  "guest_registration_fields.update": "Câmpuri fișă de cazare actualizate",
+  "guest_registration.update": "Fișă de cazare editată",
 };
 
 function formatDetails(entry: AdminAuditEntry): string | null {

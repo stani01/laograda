@@ -10,26 +10,71 @@ import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { AMENITY_ICONS, AMENITY_ICON_KEYS, type AmenityIconKey } from "@/lib/amenity-icons";
-import type { SiteSettings, Amenity } from "@/lib/site-content";
+import type { AdminSiteSettings, AdminAmenity } from "@/lib/site-content";
 
 interface AmenityDraft {
   icon: AmenityIconKey;
   label: string;
+  labelEn: string;
 }
+
+// Fields that have a Romanian value + an "...En" English counterpart on
+// AdminSiteSettings. The form-locale toggle below switches which of the
+// pair each translatable input reads from/writes to.
+type TranslatableField = Extract<
+  keyof AdminSiteSettings,
+  "heroTitle" | "heroSubtitle" | "ctaPrimaryText" | "ctaSecondaryText" | "aboutText" | "amenitiesTitle" |
+  "amenitiesSubtitle" | "galleryTitle" | "bookingTitle" | "bookingSubtitle" | "pricingTitle" | "pricingSubtitle" |
+  "contactTitle" | "contactSubtitle" | "priceNormalLabel" | "priceNormalFeatures" | "priceWeekendLabel" |
+  "priceWeekendFeatures" | "priceLongStayLabel" | "priceLongStayFeatures"
+>;
+
+const EN_KEY: Record<TranslatableField, keyof AdminSiteSettings> = {
+  heroTitle: "heroTitleEn",
+  heroSubtitle: "heroSubtitleEn",
+  ctaPrimaryText: "ctaPrimaryTextEn",
+  ctaSecondaryText: "ctaSecondaryTextEn",
+  aboutText: "aboutTextEn",
+  amenitiesTitle: "amenitiesTitleEn",
+  amenitiesSubtitle: "amenitiesSubtitleEn",
+  galleryTitle: "galleryTitleEn",
+  bookingTitle: "bookingTitleEn",
+  bookingSubtitle: "bookingSubtitleEn",
+  pricingTitle: "pricingTitleEn",
+  pricingSubtitle: "pricingSubtitleEn",
+  contactTitle: "contactTitleEn",
+  contactSubtitle: "contactSubtitleEn",
+  priceNormalLabel: "priceNormalLabelEn",
+  priceNormalFeatures: "priceNormalFeaturesEn",
+  priceWeekendLabel: "priceWeekendLabelEn",
+  priceWeekendFeatures: "priceWeekendFeaturesEn",
+  priceLongStayLabel: "priceLongStayLabelEn",
+  priceLongStayFeatures: "priceLongStayFeaturesEn",
+};
 
 export function ContentForm({
   initialSettings,
   initialAmenities,
 }: {
-  initialSettings: SiteSettings;
-  initialAmenities: Amenity[];
+  initialSettings: AdminSiteSettings;
+  initialAmenities: AdminAmenity[];
 }) {
   const router = useRouter();
   const [settings, setSettings] = useState(initialSettings);
   const [amenities, setAmenities] = useState<AmenityDraft[]>(
-    initialAmenities.map((a) => ({ icon: a.icon, label: a.label }))
+    initialAmenities.map((a) => ({ icon: a.icon, label: a.label, labelEn: a.labelEn }))
   );
   const [submitting, setSubmitting] = useState(false);
+  const [formLocale, setFormLocale] = useState<"ro" | "en">("ro");
+
+  function translatableValue(field: TranslatableField): string {
+    return (formLocale === "en" ? settings[EN_KEY[field]] : settings[field]) as string;
+  }
+
+  function setTranslatableValue(field: TranslatableField, value: string) {
+    const key = formLocale === "en" ? EN_KEY[field] : field;
+    setSettings((s) => ({ ...s, [key]: value }));
+  }
 
   function updateAmenity(index: number, patch: Partial<AmenityDraft>) {
     setAmenities((prev) => prev.map((a, i) => (i === index ? { ...a, ...patch } : a)));
@@ -40,7 +85,7 @@ export function ContentForm({
   }
 
   function addAmenity() {
-    setAmenities((prev) => [...prev, { icon: "sparkles", label: "" }]);
+    setAmenities((prev) => [...prev, { icon: "sparkles", label: "", labelEn: "" }]);
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -73,6 +118,31 @@ export function ContentForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      <div className="sticky top-0 z-10 flex items-center gap-2 rounded-lg border border-border/60 bg-background/95 p-2 backdrop-blur-sm">
+        <span className="px-1 text-sm text-muted-foreground">Limbă conținut:</span>
+        <Button
+          type="button"
+          size="sm"
+          variant={formLocale === "ro" ? "default" : "outline"}
+          onClick={() => setFormLocale("ro")}
+        >
+          🇷🇴 Română
+        </Button>
+        <Button
+          type="button"
+          size="sm"
+          variant={formLocale === "en" ? "default" : "outline"}
+          onClick={() => setFormLocale("en")}
+        >
+          🇬🇧 English
+        </Button>
+        {formLocale === "en" && (
+          <span className="px-1 text-xs text-muted-foreground">
+            Necompletat = site-ul afișează automat textul românesc.
+          </span>
+        )}
+      </div>
+
       <Card>
         <CardHeader>
           <CardTitle className="font-heading text-lg">Texte principale</CardTitle>
@@ -83,16 +153,16 @@ export function ContentForm({
               <Label htmlFor="heroTitle">Titlu (prima pagină)</Label>
               <Input
                 id="heroTitle"
-                value={settings.heroTitle}
-                onChange={(e) => setSettings((s) => ({ ...s, heroTitle: e.target.value }))}
+                value={translatableValue("heroTitle")}
+                onChange={(e) => setTranslatableValue("heroTitle", e.target.value)}
               />
             </div>
             <div className="grid gap-1.5">
               <Label htmlFor="ctaPrimaryText">Text buton principal</Label>
               <Input
                 id="ctaPrimaryText"
-                value={settings.ctaPrimaryText}
-                onChange={(e) => setSettings((s) => ({ ...s, ctaPrimaryText: e.target.value }))}
+                value={translatableValue("ctaPrimaryText")}
+                onChange={(e) => setTranslatableValue("ctaPrimaryText", e.target.value)}
               />
             </div>
           </div>
@@ -101,16 +171,16 @@ export function ContentForm({
             <Textarea
               id="heroSubtitle"
               rows={3}
-              value={settings.heroSubtitle}
-              onChange={(e) => setSettings((s) => ({ ...s, heroSubtitle: e.target.value }))}
+              value={translatableValue("heroSubtitle")}
+              onChange={(e) => setTranslatableValue("heroSubtitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="ctaSecondaryText">Text buton secundar (prima pagină)</Label>
             <Input
               id="ctaSecondaryText"
-              value={settings.ctaSecondaryText}
-              onChange={(e) => setSettings((s) => ({ ...s, ctaSecondaryText: e.target.value }))}
+              value={translatableValue("ctaSecondaryText")}
+              onChange={(e) => setTranslatableValue("ctaSecondaryText", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
@@ -118,8 +188,8 @@ export function ContentForm({
             <Textarea
               id="aboutText"
               rows={3}
-              value={settings.aboutText}
-              onChange={(e) => setSettings((s) => ({ ...s, aboutText: e.target.value }))}
+              value={translatableValue("aboutText")}
+              onChange={(e) => setTranslatableValue("aboutText", e.target.value)}
             />
           </div>
           <div className="grid gap-4 sm:grid-cols-2">
@@ -223,16 +293,16 @@ export function ContentForm({
             <Label htmlFor="amenitiesTitle">Titlu — Facilități</Label>
             <Input
               id="amenitiesTitle"
-              value={settings.amenitiesTitle}
-              onChange={(e) => setSettings((s) => ({ ...s, amenitiesTitle: e.target.value }))}
+              value={translatableValue("amenitiesTitle")}
+              onChange={(e) => setTranslatableValue("amenitiesTitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="galleryTitle">Titlu — Galerie foto</Label>
             <Input
               id="galleryTitle"
-              value={settings.galleryTitle}
-              onChange={(e) => setSettings((s) => ({ ...s, galleryTitle: e.target.value }))}
+              value={translatableValue("galleryTitle")}
+              onChange={(e) => setTranslatableValue("galleryTitle", e.target.value)}
             />
           </div>
           <div className="col-span-full grid gap-1.5">
@@ -240,24 +310,24 @@ export function ContentForm({
             <Textarea
               id="amenitiesSubtitle"
               rows={2}
-              value={settings.amenitiesSubtitle}
-              onChange={(e) => setSettings((s) => ({ ...s, amenitiesSubtitle: e.target.value }))}
+              value={translatableValue("amenitiesSubtitle")}
+              onChange={(e) => setTranslatableValue("amenitiesSubtitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="bookingTitle">Titlu — Rezervare</Label>
             <Input
               id="bookingTitle"
-              value={settings.bookingTitle}
-              onChange={(e) => setSettings((s) => ({ ...s, bookingTitle: e.target.value }))}
+              value={translatableValue("bookingTitle")}
+              onChange={(e) => setTranslatableValue("bookingTitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="pricingTitle">Titlu — Prețuri</Label>
             <Input
               id="pricingTitle"
-              value={settings.pricingTitle}
-              onChange={(e) => setSettings((s) => ({ ...s, pricingTitle: e.target.value }))}
+              value={translatableValue("pricingTitle")}
+              onChange={(e) => setTranslatableValue("pricingTitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
@@ -265,8 +335,8 @@ export function ContentForm({
             <Textarea
               id="bookingSubtitle"
               rows={2}
-              value={settings.bookingSubtitle}
-              onChange={(e) => setSettings((s) => ({ ...s, bookingSubtitle: e.target.value }))}
+              value={translatableValue("bookingSubtitle")}
+              onChange={(e) => setTranslatableValue("bookingSubtitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
@@ -274,16 +344,16 @@ export function ContentForm({
             <Textarea
               id="pricingSubtitle"
               rows={2}
-              value={settings.pricingSubtitle}
-              onChange={(e) => setSettings((s) => ({ ...s, pricingSubtitle: e.target.value }))}
+              value={translatableValue("pricingSubtitle")}
+              onChange={(e) => setTranslatableValue("pricingSubtitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
             <Label htmlFor="contactTitle">Titlu — Contact</Label>
             <Input
               id="contactTitle"
-              value={settings.contactTitle}
-              onChange={(e) => setSettings((s) => ({ ...s, contactTitle: e.target.value }))}
+              value={translatableValue("contactTitle")}
+              onChange={(e) => setTranslatableValue("contactTitle", e.target.value)}
             />
           </div>
           <div className="grid gap-1.5">
@@ -291,8 +361,8 @@ export function ContentForm({
             <Textarea
               id="contactSubtitle"
               rows={2}
-              value={settings.contactSubtitle}
-              onChange={(e) => setSettings((s) => ({ ...s, contactSubtitle: e.target.value }))}
+              value={translatableValue("contactSubtitle")}
+              onChange={(e) => setTranslatableValue("contactSubtitle", e.target.value)}
             />
           </div>
         </CardContent>
@@ -308,8 +378,8 @@ export function ContentForm({
               <Label htmlFor="priceNormalLabel">Denumire plan</Label>
               <Input
                 id="priceNormalLabel"
-                value={settings.priceNormalLabel}
-                onChange={(e) => setSettings((s) => ({ ...s, priceNormalLabel: e.target.value }))}
+                value={translatableValue("priceNormalLabel")}
+                onChange={(e) => setTranslatableValue("priceNormalLabel", e.target.value)}
               />
             </div>
             <div className="grid gap-1.5">
@@ -327,8 +397,8 @@ export function ContentForm({
               <Textarea
                 id="priceNormalFeatures"
                 rows={4}
-                value={settings.priceNormalFeatures}
-                onChange={(e) => setSettings((s) => ({ ...s, priceNormalFeatures: e.target.value }))}
+                value={translatableValue("priceNormalFeatures")}
+                onChange={(e) => setTranslatableValue("priceNormalFeatures", e.target.value)}
               />
             </div>
           </div>
@@ -338,8 +408,8 @@ export function ContentForm({
               <Label htmlFor="priceWeekendLabel">Denumire plan</Label>
               <Input
                 id="priceWeekendLabel"
-                value={settings.priceWeekendLabel}
-                onChange={(e) => setSettings((s) => ({ ...s, priceWeekendLabel: e.target.value }))}
+                value={translatableValue("priceWeekendLabel")}
+                onChange={(e) => setTranslatableValue("priceWeekendLabel", e.target.value)}
               />
             </div>
             <div className="grid gap-1.5">
@@ -357,8 +427,8 @@ export function ContentForm({
               <Textarea
                 id="priceWeekendFeatures"
                 rows={4}
-                value={settings.priceWeekendFeatures}
-                onChange={(e) => setSettings((s) => ({ ...s, priceWeekendFeatures: e.target.value }))}
+                value={translatableValue("priceWeekendFeatures")}
+                onChange={(e) => setTranslatableValue("priceWeekendFeatures", e.target.value)}
               />
             </div>
           </div>
@@ -368,8 +438,8 @@ export function ContentForm({
               <Label htmlFor="priceLongStayLabel">Denumire plan</Label>
               <Input
                 id="priceLongStayLabel"
-                value={settings.priceLongStayLabel}
-                onChange={(e) => setSettings((s) => ({ ...s, priceLongStayLabel: e.target.value }))}
+                value={translatableValue("priceLongStayLabel")}
+                onChange={(e) => setTranslatableValue("priceLongStayLabel", e.target.value)}
               />
             </div>
             <div className="grid gap-1.5">
@@ -387,8 +457,8 @@ export function ContentForm({
               <Textarea
                 id="priceLongStayFeatures"
                 rows={4}
-                value={settings.priceLongStayFeatures}
-                onChange={(e) => setSettings((s) => ({ ...s, priceLongStayFeatures: e.target.value }))}
+                value={translatableValue("priceLongStayFeatures")}
+                onChange={(e) => setTranslatableValue("priceLongStayFeatures", e.target.value)}
               />
             </div>
           </div>
@@ -414,9 +484,11 @@ export function ContentForm({
                 ))}
               </select>
               <Input
-                value={amenity.label}
-                onChange={(e) => updateAmenity(index, { label: e.target.value })}
-                placeholder="ex: Vedere superbă la munte"
+                value={formLocale === "en" ? amenity.labelEn : amenity.label}
+                onChange={(e) =>
+                  updateAmenity(index, formLocale === "en" ? { labelEn: e.target.value } : { label: e.target.value })
+                }
+                placeholder={formLocale === "en" ? "e.g. Superb mountain views" : "ex: Vedere superbă la munte"}
                 className="flex-1"
               />
               <Button type="button" variant="outline" size="icon" onClick={() => removeAmenity(index)}>

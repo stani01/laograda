@@ -1,8 +1,10 @@
 import { Mountain, Mail, Phone, MapPin, Compass } from "lucide-react";
 import type { SiteSettings } from "@/lib/site-content";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
-export function SiteFooter({ settings }: { settings: SiteSettings }) {
+export function SiteFooter({ settings, locale }: { settings: SiteSettings; locale: Locale }) {
   const year = new Date().getFullYear();
+  const t = getDictionary(locale);
 
   return (
     <footer className="border-t border-border/60 bg-muted/30">
@@ -16,7 +18,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         </div>
 
         <div className="text-sm">
-          <h3 className="mb-3 font-heading font-semibold">Contact</h3>
+          <h3 className="mb-3 font-heading font-semibold">{t.footer.contactHeading}</h3>
           <ul className="space-y-2 text-muted-foreground">
             <li className="flex items-center gap-2">
               <Phone className="size-4 shrink-0" aria-hidden />
@@ -45,7 +47,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
         </div>
 
         <div className="text-sm">
-          <h3 className="mb-3 font-heading font-semibold">Găsește-ne și pe</h3>
+          <h3 className="mb-3 font-heading font-semibold">{t.footer.followUs}</h3>
           <div className="flex items-center gap-3">
             <a
               href={settings.instagramUrl}
@@ -124,7 +126,7 @@ export function SiteFooter({ settings }: { settings: SiteSettings }) {
       </div>
 
       <div className="border-t border-border/60 py-4 text-center text-xs text-muted-foreground">
-        © {year} LaOgrada. Toate drepturile rezervate.
+        © {year} LaOgrada. {t.footer.rights}
       </div>
     </footer>
   );

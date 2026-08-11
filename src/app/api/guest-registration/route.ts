@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { guestRegistrationSchema } from "@/types/guest-registration";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getGuestRegistrationFieldDefs } from "@/lib/guest-registration-fields";
 
 export async function POST(request: NextRequest) {
   const json = await request.json().catch(() => null);
@@ -34,7 +35,23 @@ export async function POST(request: NextRequest) {
     additionalGuests,
     purpose,
     gdprConsent,
+    locale,
+    customFields,
   } = parsed.data;
+
+  // Re-validate required custom fields server-side too — the client already
+  // checks this, but never trust the client alone.
+  const fieldDefs = await getGuestRegistrationFieldDefs();
+  const providedByKey = new Map((customFields ?? []).map((f) => [f.key, f]));
+
+  for (const def of fieldDefs) {
+    if (def.required && !(providedByKey.get(def.fieldKey)?.value ?? "").trim()) {
+      return NextResponse.json(
+        { error: `Câmpul „${def.label}” este obligatoriu` },
+        { status: 400 }
+      );
+    }
+  }
 
   try {
     const supabase = createAdminClient();
@@ -54,6 +71,8 @@ export async function POST(request: NextRequest) {
       additional_guests: additionalGuests || null,
       purpose,
       gdpr_consent: gdprConsent,
+      locale,
+      custom_fields: customFields ?? [],
     });
 
     if (error) throw error;

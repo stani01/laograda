@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Settings } from "lucide-react";
 import type { GuestRegistrationForm } from "@/types/guest-registration";
 
 export const dynamic = "force-dynamic";
@@ -24,6 +26,8 @@ function toForm(row: Record<string, unknown>): GuestRegistrationForm {
     additionalGuests: (row.additional_guests as string | null) ?? null,
     purpose: row.purpose as string,
     gdprConsent: row.gdpr_consent as boolean,
+    locale: (row.locale as "ro" | "en") ?? "ro",
+    customFields: (row.custom_fields as GuestRegistrationForm["customFields"]) ?? [],
     createdAt: row.created_at as string,
   };
 }
@@ -48,12 +52,21 @@ export default async function AdminGuestRegistrationsPage() {
 
   return (
     <div>
-      <h1 className="font-heading text-2xl font-semibold">Fișe de cazare</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Completate de oaspeți prin linkul{" "}
-        <code className="rounded bg-muted px-1 py-0.5 text-xs">/fisa-cazare</code>. Nu înlocuiește
-        raportarea obligatorie e-cazare.mai.gov.ro pentru turiștii străini.
-      </p>
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <h1 className="font-heading text-2xl font-semibold">Fișe de cazare</h1>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Completate de oaspeți prin linkurile{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">/fisa-cazare</code> și{" "}
+            <code className="rounded bg-muted px-1 py-0.5 text-xs">/guest-registration</code>. Nu înlocuiește
+            raportarea obligatorie e-cazare.mai.gov.ro pentru turiștii străini.
+          </p>
+        </div>
+        <Button variant="outline" size="sm" render={<Link href="/admin/fise-cazare/campuri" />}>
+          <Settings className="size-4" aria-hidden />
+          Gestionează câmpuri
+        </Button>
+      </div>
 
       {hasError && (
         <p className="mt-4 text-sm text-destructive">
@@ -75,6 +88,7 @@ export default async function AdminGuestRegistrationsPage() {
                   <div className="flex items-center gap-2">
                     <span className="font-medium">{form.fullName}</span>
                     <Badge variant="secondary">{form.guestsCount} pers.</Badge>
+                    <Badge variant="outline">{form.locale === "en" ? "🇬🇧 EN" : "🇷🇴 RO"}</Badge>
                   </div>
                   <p className="mt-1 text-sm text-muted-foreground">
                     {form.checkIn} → {form.checkOut} · {form.phone}

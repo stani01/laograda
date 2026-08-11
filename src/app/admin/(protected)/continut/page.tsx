@@ -1,10 +1,10 @@
-import { getSiteContent } from "@/lib/site-content";
+import { getAdminSiteContent } from "@/lib/site-content";
 import { ContentForm } from "@/components/admin/content-form";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminContentPage() {
-  const { settings, amenities } = await getSiteContent();
+  const { settings, amenities } = await getAdminSiteContent();
 
   return (
     <div>

@@ -2,27 +2,31 @@ import { Check } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import type { SiteSettings } from "@/lib/site-content";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
-export function PricingSection({ settings }: { settings: SiteSettings }) {
+export function PricingSection({ settings, locale }: { settings: SiteSettings; locale: Locale }) {
+  const t = getDictionary(locale);
+  const unit = locale === "en" ? "/ night" : "/ noapte";
+
   const plans = [
     {
       name: settings.priceNormalLabel,
       price: `${settings.priceNormal} lei`,
-      unit: "/ noapte",
+      unit,
       features: settings.priceNormalFeatures.split("\n").filter(Boolean),
       highlighted: false,
     },
     {
       name: settings.priceWeekendLabel,
       price: `${settings.priceWeekend} lei`,
-      unit: "/ noapte",
+      unit,
       features: settings.priceWeekendFeatures.split("\n").filter(Boolean),
       highlighted: true,
     },
     {
       name: settings.priceLongStayLabel,
       price: `${settings.priceLongStay} lei`,
-      unit: "/ noapte",
+      unit,
       features: settings.priceLongStayFeatures.split("\n").filter(Boolean),
       highlighted: false,
     },
@@ -44,7 +48,7 @@ export function PricingSection({ settings }: { settings: SiteSettings }) {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <CardTitle className="font-heading text-lg">{plan.name}</CardTitle>
-                {plan.highlighted && <Badge>Popular</Badge>}
+                {plan.highlighted && <Badge>{t.pricing.popular}</Badge>}
               </div>
               <div className="mt-2 flex items-baseline gap-1">
                 <span className="text-3xl font-semibold">{plan.price}</span>

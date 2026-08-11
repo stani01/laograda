@@ -4,6 +4,30 @@ const isoDate = z
   .string()
   .regex(/^\d{4}-\d{2}-\d{2}$/, "Format de dată invalid (AAAA-LL-ZZ)");
 
+export const CUSTOM_FIELD_TYPES = ["text", "textarea", "number", "date", "checkbox"] as const;
+export type CustomFieldType = (typeof CUSTOM_FIELD_TYPES)[number];
+
+/** One admin-defined extra field shown on the public /fisa-cazare & /guest-registration forms. */
+export interface CustomFieldDef {
+  id: string;
+  fieldKey: string;
+  label: string;
+  labelEn: string;
+  fieldType: CustomFieldType;
+  required: boolean;
+  position: number;
+}
+
+/** One answered custom field, snapshotted with its label at submission time
+ * so admin can still read it correctly even if the field def changes later. */
+const customFieldValueSchema = z.object({
+  key: z.string().trim().min(1).max(60),
+  label: z.string().trim().min(1).max(150),
+  value: z.string().trim().max(1000),
+});
+
+export type CustomFieldValue = z.infer<typeof customFieldValueSchema>;
+
 export const guestRegistrationSchema = z
   .object({
     fullName: z.string().trim().min(2, "Numele este prea scurt").max(150),
@@ -21,6 +45,8 @@ export const guestRegistrationSchema = z
     additionalGuests: z.string().trim().max(500).optional(),
     purpose: z.string().trim().min(2).max(100),
     gdprConsent: z.literal(true, "Trebuie să fii de acord cu prelucrarea datelor pentru a continua"),
+    locale: z.enum(["ro", "en"]).default("ro"),
+    customFields: z.array(customFieldValueSchema).max(30).optional(),
     // Honeypot field: real users never fill this in, bots often do.
     company: z.string().max(0).optional(),
   })
@@ -48,5 +74,7 @@ export interface GuestRegistrationForm {
   additionalGuests: string | null;
   purpose: string;
   gdprConsent: boolean;
+  locale: "ro" | "en";
+  customFields: CustomFieldValue[];
   createdAt: string;
 }

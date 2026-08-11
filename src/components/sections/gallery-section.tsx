@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Dialog, DialogClose, DialogContent } from "@/components/ui/dialog";
 import { LightboxImage } from "@/components/sections/lightbox-image";
 import type { GalleryImage, SiteSettings } from "@/lib/site-content";
+import { getDictionary, type Locale } from "@/lib/i18n";
 
 // Placeholder tiles shown until real photos are uploaded from /admin/galerie.
 const PLACEHOLDER_COUNT = 6;
@@ -14,10 +15,13 @@ const PLACEHOLDER_COUNT = 6;
 export function GallerySection({
   settings,
   images,
+  locale,
 }: {
   settings: SiteSettings;
   images: GalleryImage[];
+  locale: Locale;
 }) {
+  const t = getDictionary(locale);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const activeImage = activeIndex !== null ? images[activeIndex] : null;
 
@@ -36,15 +40,14 @@ export function GallerySection({
           <h2 className="font-heading text-3xl font-semibold sm:text-4xl">{settings.galleryTitle}</h2>
           {images.length === 0 && (
             <p className="mt-3 text-muted-foreground">
-              Fotografiem curând casa pentru acest site — până atunci, poți
-              vedea poze reale{" "}
+              {t.gallery.comingSoonPrefix}{" "}
               <Link
                 href="https://www.airbnb.com/rooms/44671053"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="font-medium text-primary underline underline-offset-4"
               >
-                pe profilul nostru Airbnb
+                {t.gallery.airbnbLinkText}
               </Link>
               .
             </p>
@@ -57,7 +60,7 @@ export function GallerySection({
               <button
                 key={image.id}
                 type="button"
-                aria-label="Mărește poza"
+                aria-label={t.gallery.zoomIn}
                 onClick={() => setActiveIndex(index)}
                 className="group relative aspect-square cursor-zoom-in overflow-hidden rounded-xl bg-muted"
               >
@@ -106,7 +109,7 @@ export function GallerySection({
             render={
               <button
                 type="button"
-                aria-label="Închide"
+                aria-label={t.gallery.close}
                 className="absolute top-4 right-4 z-10 flex size-11 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70"
               />
             }
@@ -118,7 +121,7 @@ export function GallerySection({
             <>
               <button
                 type="button"
-                aria-label="Poza anterioară"
+                aria-label={t.gallery.prev}
                 onClick={showPrev}
                 className="absolute top-1/2 left-2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 sm:left-4"
               >
@@ -126,7 +129,7 @@ export function GallerySection({
               </button>
               <button
                 type="button"
-                aria-label="Poza următoare"
+                aria-label={t.gallery.next}
                 onClick={showNext}
                 className="absolute top-1/2 right-2 z-10 flex size-11 -translate-y-1/2 items-center justify-center rounded-full bg-black/50 text-white backdrop-blur-sm transition hover:bg-black/70 sm:right-4"
               >
