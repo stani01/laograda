@@ -62,24 +62,25 @@ export function GallerySection({
                 />
                 <DialogContent
                   showCloseButton
-                  className="max-h-[90vh] max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-4xl"
+                  className="flex max-h-[90vh] items-center justify-center border-none bg-transparent p-0 shadow-none ring-0"
                 >
                   <DialogClose
                     render={
                       <button
                         type="button"
                         aria-label="Micșorează poza"
-                        className="relative aspect-[4/3] max-h-[85vh] w-full cursor-zoom-out overflow-hidden rounded-xl border border-white/15 shadow-2xl sm:aspect-video"
+                        className="relative inline-block cursor-zoom-out overflow-hidden rounded-xl border border-white/15 leading-none shadow-2xl"
                       />
                     }
                   >
                     <Image
                       src={image.url}
                       alt={image.alt}
-                      fill
-                      className="object-contain"
+                      width={1920}
+                      height={1440}
                       quality={90}
                       sizes="90vw"
+                      className="block h-auto max-h-[85vh] w-auto max-w-[90vw] object-contain"
                     />
                   </DialogClose>
                 </DialogContent>
