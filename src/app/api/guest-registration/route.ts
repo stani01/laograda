@@ -1,7 +1,8 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { guestRegistrationSchema } from "@/types/guest-registration";
+import { guestRegistrationSchema, type StandardFieldConfig } from "@/types/guest-registration";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getGuestRegistrationFieldDefs } from "@/lib/guest-registration-fields";
+import { getGuestRegistrationStandardFields } from "@/lib/guest-registration-standard-fields";
 
 export async function POST(request: NextRequest) {
   const json = await request.json().catch(() => null);
@@ -39,8 +40,32 @@ export async function POST(request: NextRequest) {
     customFields,
   } = parsed.data;
 
-  // Re-validate required custom fields server-side too — the client already
-  // checks this, but never trust the client alone.
+  // Re-validate required fields server-side too — the client already checks
+  // this, but never trust the client alone. Standard field required-ness and
+  // labels come from admin config (/admin/fise-cazare/campuri).
+  const standardFields = await getGuestRegistrationStandardFields();
+  const standardValues: Record<StandardFieldConfig["key"], string | undefined> = {
+    fullName,
+    documentSeries,
+    documentNumber,
+    nationality,
+    birthDate,
+    address,
+    phone,
+    email,
+    additionalGuests,
+    purpose,
+  };
+
+  for (const field of standardFields) {
+    if (field.required && !(standardValues[field.key] ?? "").trim()) {
+      return NextResponse.json(
+        { error: `Câmpul „${field.label}” este obligatoriu` },
+        { status: 400 }
+      );
+    }
+  }
+
   const fieldDefs = await getGuestRegistrationFieldDefs();
   const providedByKey = new Map((customFields ?? []).map((f) => [f.key, f]));
 

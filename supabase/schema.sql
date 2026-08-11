@@ -86,6 +86,34 @@ create index if not exists guest_registration_field_defs_position_idx on public.
 
 create index if not exists guest_registration_forms_created_at_idx on public.guest_registration_forms (created_at desc);
 
+-- Admin-editable label/required overrides for the FIXED/core fields on the
+-- guest registration form (fullName, documentNumber, etc.) — lets the owners
+-- rename labels or toggle which ones are mandatory from
+-- /admin/fise-cazare/campuri, without touching the field's underlying type
+-- or length limits (those stay in code/DB column constraints). Rows are
+-- keyed by the field's stable code-side key, so any key missing here just
+-- falls back to its built-in default in src/lib/guest-registration-standard-fields.ts.
+create table if not exists public.guest_registration_standard_fields (
+  key text primary key,
+  label text not null,
+  label_en text not null default '',
+  required boolean not null default true,
+  updated_at timestamptz not null default now()
+);
+
+insert into public.guest_registration_standard_fields (key, label, label_en, required) values
+  ('fullName', 'Nume și prenume', 'Full name', true),
+  ('documentSeries', 'Serie (dacă e cazul)', 'Series (if applicable)', false),
+  ('documentNumber', 'Număr act', 'Document number', true),
+  ('nationality', 'Naționalitate', 'Nationality', true),
+  ('birthDate', 'Data nașterii (opțional)', 'Date of birth (optional)', false),
+  ('address', 'Adresă domiciliu', 'Home address', true),
+  ('phone', 'Telefon', 'Phone', true),
+  ('email', 'Email (opțional)', 'Email (optional)', false),
+  ('additionalGuests', 'Alte persoane cazate împreună cu tine (opțional)', 'Other guests staying with you (optional)', false),
+  ('purpose', 'Scopul călătoriei', 'Purpose of travel', true)
+on conflict (key) do nothing;
+
 -- Row Level Security: no public read/write. All access goes through Route
 -- Handlers using the service role key (see src/lib/supabase/admin.ts), which
 -- validates input with zod before touching the database.
@@ -93,6 +121,7 @@ alter table public.bookings enable row level security;
 alter table public.contact_messages enable row level security;
 alter table public.guest_registration_forms enable row level security;
 alter table public.guest_registration_field_defs enable row level security;
+alter table public.guest_registration_standard_fields enable row level security;
 
 -- ---------------------------------------------------------------------------
 -- Admin-editable site content (managed from /admin by the owners)

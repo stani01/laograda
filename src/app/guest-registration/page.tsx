@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mountain } from "lucide-react";
 import { GuestRegistrationForm } from "@/components/sections/guest-registration-form";
 import { getGuestRegistrationFieldDefs } from "@/lib/guest-registration-fields";
+import { getGuestRegistrationStandardFields } from "@/lib/guest-registration-standard-fields";
 import { getDictionary } from "@/lib/i18n";
 
 export const metadata = {
@@ -12,7 +13,10 @@ export const metadata = {
 // with English copy. Separate URL (not a query param) so it's a clean,
 // shareable link for foreign guests.
 export default async function EnglishGuestRegistrationPage() {
-  const fieldDefs = await getGuestRegistrationFieldDefs();
+  const [fieldDefs, standardFields] = await Promise.all([
+    getGuestRegistrationFieldDefs(),
+    getGuestRegistrationStandardFields(),
+  ]);
   const t = getDictionary("en");
 
   return (
@@ -31,7 +35,7 @@ export default async function EnglishGuestRegistrationPage() {
       <p className="mt-2 text-center text-sm text-muted-foreground">{t.guestRegistration.pageSubtitle}</p>
 
       <div className="mt-8">
-        <GuestRegistrationForm locale="en" fieldDefs={fieldDefs} />
+        <GuestRegistrationForm locale="en" fieldDefs={fieldDefs} standardFields={standardFields} />
       </div>
     </div>
   );

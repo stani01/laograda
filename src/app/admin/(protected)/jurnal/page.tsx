@@ -11,6 +11,7 @@ const ACTION_LABELS: Record<string, string> = {
   "gallery.reorder": "Ordine poze schimbată",
   "booking.status_update": "Status rezervare schimbat",
   "guest_registration_fields.update": "Câmpuri fișă de cazare actualizate",
+  "guest_registration_standard_fields.update": "Câmpuri standard fișă de cazare actualizate",
   "guest_registration.update": "Fișă de cazare editată",
 };
 

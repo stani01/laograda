@@ -16,6 +16,7 @@ export type AdminAuditAction =
   | "gallery.reorder"
   | "booking.status_update"
   | "guest_registration_fields.update"
+  | "guest_registration_standard_fields.update"
   | "guest_registration.update";
 
 export interface AdminAuditEntry {

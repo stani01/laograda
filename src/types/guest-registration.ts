@@ -28,22 +28,84 @@ const customFieldValueSchema = z.object({
 
 export type CustomFieldValue = z.infer<typeof customFieldValueSchema>;
 
+/**
+ * Keys of the fixed/built-in fields on the guest registration form. Their
+ * input type and length limits are structural (baked into the DB columns &
+ * this schema) and NOT admin-editable, but the label text and whether each
+ * one is required CAN be customized from /admin/fise-cazare/campuri — see
+ * StandardFieldConfig below. documentType/checkIn/checkOut/guestsCount are
+ * excluded here because they're always required (core to the form's
+ * purpose), so there's nothing useful to toggle for them.
+ */
+export const STANDARD_FIELD_KEYS = [
+  "fullName",
+  "documentSeries",
+  "documentNumber",
+  "nationality",
+  "birthDate",
+  "address",
+  "phone",
+  "email",
+  "additionalGuests",
+  "purpose",
+] as const;
+export type StandardFieldKey = (typeof STANDARD_FIELD_KEYS)[number];
+
+/** Structural info (never admin-editable) shown as read-only reference next to each standard field. */
+export const STANDARD_FIELD_META: Record<StandardFieldKey, { inputType: string; limits: string }> = {
+  fullName: { inputType: "Text", limits: "2–150 caractere" },
+  documentSeries: { inputType: "Text", limits: "max. 20 caractere" },
+  documentNumber: { inputType: "Text", limits: "2–30 caractere" },
+  nationality: { inputType: "Text", limits: "2–60 caractere" },
+  birthDate: { inputType: "Dată", limits: "—" },
+  address: { inputType: "Text", limits: "5–300 caractere" },
+  phone: { inputType: "Telefon", limits: "6–20 caractere" },
+  email: { inputType: "Email", limits: "—" },
+  additionalGuests: { inputType: "Text lung", limits: "max. 500 caractere" },
+  purpose: { inputType: "Text", limits: "2–100 caractere" },
+};
+
+/** Default label + required-ness, matching the original hardcoded behaviour — used to seed the DB and as a fallback. */
+export const DEFAULT_STANDARD_FIELDS: Record<StandardFieldKey, { label: string; labelEn: string; required: boolean }> = {
+  fullName: { label: "Nume și prenume", labelEn: "Full name", required: true },
+  documentSeries: { label: "Serie (dacă e cazul)", labelEn: "Series (if applicable)", required: false },
+  documentNumber: { label: "Număr act", labelEn: "Document number", required: true },
+  nationality: { label: "Naționalitate", labelEn: "Nationality", required: true },
+  birthDate: { label: "Data nașterii (opțional)", labelEn: "Date of birth (optional)", required: false },
+  address: { label: "Adresă domiciliu", labelEn: "Home address", required: true },
+  phone: { label: "Telefon", labelEn: "Phone", required: true },
+  email: { label: "Email (opțional)", labelEn: "Email (optional)", required: false },
+  additionalGuests: {
+    label: "Alte persoane cazate împreună cu tine (opțional)",
+    labelEn: "Other guests staying with you (optional)",
+    required: false,
+  },
+  purpose: { label: "Scopul călătoriei", labelEn: "Purpose of travel", required: true },
+};
+
+export interface StandardFieldConfig {
+  key: StandardFieldKey;
+  label: string;
+  labelEn: string;
+  required: boolean;
+}
+
 export const guestRegistrationSchema = z
   .object({
-    fullName: z.string().trim().min(2, "Numele este prea scurt").max(150),
+    fullName: z.string().trim().max(150),
     documentType: z.enum(["CI", "pasaport"]),
     documentSeries: z.string().trim().max(20).optional(),
-    documentNumber: z.string().trim().min(2, "Număr act invalid").max(30),
-    nationality: z.string().trim().min(2, "Naționalitate invalidă").max(60),
+    documentNumber: z.string().trim().max(30),
+    nationality: z.string().trim().max(60),
     birthDate: z.string().trim().max(10).optional(),
-    address: z.string().trim().min(5, "Adresa este prea scurtă").max(300),
-    phone: z.string().trim().min(6, "Număr de telefon invalid").max(20),
+    address: z.string().trim().max(300),
+    phone: z.string().trim().max(20),
     email: z.email("Adresă de email invalidă").optional().or(z.literal("")),
     checkIn: isoDate,
     checkOut: isoDate,
     guestsCount: z.coerce.number().int().min(1).max(20),
     additionalGuests: z.string().trim().max(500).optional(),
-    purpose: z.string().trim().min(2).max(100),
+    purpose: z.string().trim().max(100),
     gdprConsent: z.literal(true, "Trebuie să fii de acord cu prelucrarea datelor pentru a continua"),
     locale: z.enum(["ro", "en"]).default("ro"),
     customFields: z.array(customFieldValueSchema).max(30).optional(),

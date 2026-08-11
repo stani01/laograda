@@ -9,10 +9,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { getDictionary, type Locale } from "@/lib/i18n";
-import type { CustomFieldDef } from "@/types/guest-registration";
+import type { CustomFieldDef, StandardFieldConfig } from "@/types/guest-registration";
 
-export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; fieldDefs: CustomFieldDef[] }) {
+export function GuestRegistrationForm({
+  locale,
+  fieldDefs,
+  standardFields,
+}: {
+  locale: Locale;
+  fieldDefs: CustomFieldDef[];
+  standardFields: StandardFieldConfig[];
+}) {
   const t = getDictionary(locale);
+  const stdLabel = (key: StandardFieldConfig["key"]) => {
+    const field = standardFields.find((f) => f.key === key)!;
+    return locale === "en" && field.labelEn ? field.labelEn : field.label;
+  };
+  const stdRequired = (key: StandardFieldConfig["key"]) => standardFields.find((f) => f.key === key)!.required;
   const [fullName, setFullName] = useState("");
   const [documentType, setDocumentType] = useState<"CI" | "pasaport">("CI");
   const [documentSeries, setDocumentSeries] = useState("");
@@ -39,6 +52,26 @@ export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; f
     if (!gdprConsent) {
       toast.error(t.guestRegistration.consentRequired);
       return;
+    }
+
+    const stdValues: Record<StandardFieldConfig["key"], string> = {
+      fullName,
+      documentSeries,
+      documentNumber,
+      nationality,
+      birthDate,
+      address,
+      phone,
+      email,
+      additionalGuests,
+      purpose,
+    };
+
+    for (const field of standardFields) {
+      if (field.required && !stdValues[field.key].trim()) {
+        toast.error(stdLabel(field.key));
+        return;
+      }
     }
 
     for (const field of fieldDefs) {
@@ -110,8 +143,11 @@ export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; f
       <CardContent>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="grid gap-1.5">
-            <Label htmlFor="fullName">{t.guestRegistration.fullName}</Label>
-            <Input id="fullName" required value={fullName} onChange={(e) => setFullName(e.target.value)} />
+            <Label htmlFor="fullName">
+              {stdLabel("fullName")}
+              {stdRequired("fullName") && " *"}
+            </Label>
+            <Input id="fullName" required={stdRequired("fullName")} value={fullName} onChange={(e) => setFullName(e.target.value)} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-3">
@@ -128,39 +164,87 @@ export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; f
               </select>
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="documentSeries">{t.guestRegistration.documentSeries}</Label>
-              <Input id="documentSeries" value={documentSeries} onChange={(e) => setDocumentSeries(e.target.value)} />
+              <Label htmlFor="documentSeries">
+                {stdLabel("documentSeries")}
+                {stdRequired("documentSeries") && " *"}
+              </Label>
+              <Input
+                id="documentSeries"
+                required={stdRequired("documentSeries")}
+                value={documentSeries}
+                onChange={(e) => setDocumentSeries(e.target.value)}
+              />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="documentNumber">{t.guestRegistration.documentNumber}</Label>
-              <Input id="documentNumber" required value={documentNumber} onChange={(e) => setDocumentNumber(e.target.value)} />
+              <Label htmlFor="documentNumber">
+                {stdLabel("documentNumber")}
+                {stdRequired("documentNumber") && " *"}
+              </Label>
+              <Input
+                id="documentNumber"
+                required={stdRequired("documentNumber")}
+                value={documentNumber}
+                onChange={(e) => setDocumentNumber(e.target.value)}
+              />
             </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
-              <Label htmlFor="nationality">{t.guestRegistration.nationality}</Label>
-              <Input id="nationality" required value={nationality} onChange={(e) => setNationality(e.target.value)} />
+              <Label htmlFor="nationality">
+                {stdLabel("nationality")}
+                {stdRequired("nationality") && " *"}
+              </Label>
+              <Input
+                id="nationality"
+                required={stdRequired("nationality")}
+                value={nationality}
+                onChange={(e) => setNationality(e.target.value)}
+              />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="birthDate">{t.guestRegistration.birthDate}</Label>
-              <Input id="birthDate" type="date" value={birthDate} onChange={(e) => setBirthDate(e.target.value)} />
+              <Label htmlFor="birthDate">
+                {stdLabel("birthDate")}
+                {stdRequired("birthDate") && " *"}
+              </Label>
+              <Input
+                id="birthDate"
+                type="date"
+                required={stdRequired("birthDate")}
+                value={birthDate}
+                onChange={(e) => setBirthDate(e.target.value)}
+              />
             </div>
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="address">{t.guestRegistration.address}</Label>
-            <Input id="address" required value={address} onChange={(e) => setAddress(e.target.value)} />
+            <Label htmlFor="address">
+              {stdLabel("address")}
+              {stdRequired("address") && " *"}
+            </Label>
+            <Input id="address" required={stdRequired("address")} value={address} onChange={(e) => setAddress(e.target.value)} />
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="grid gap-1.5">
-              <Label htmlFor="phone">{t.guestRegistration.phone}</Label>
-              <Input id="phone" type="tel" required value={phone} onChange={(e) => setPhone(e.target.value)} />
+              <Label htmlFor="phone">
+                {stdLabel("phone")}
+                {stdRequired("phone") && " *"}
+              </Label>
+              <Input id="phone" type="tel" required={stdRequired("phone")} value={phone} onChange={(e) => setPhone(e.target.value)} />
             </div>
             <div className="grid gap-1.5">
-              <Label htmlFor="email">{t.guestRegistration.email}</Label>
-              <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+              <Label htmlFor="email">
+                {stdLabel("email")}
+                {stdRequired("email") && " *"}
+              </Label>
+              <Input
+                id="email"
+                type="email"
+                required={stdRequired("email")}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+              />
             </div>
           </div>
 
@@ -188,10 +272,14 @@ export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; f
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="additionalGuests">{t.guestRegistration.additionalGuests}</Label>
+            <Label htmlFor="additionalGuests">
+              {stdLabel("additionalGuests")}
+              {stdRequired("additionalGuests") && " *"}
+            </Label>
             <Textarea
               id="additionalGuests"
               rows={2}
+              required={stdRequired("additionalGuests")}
               placeholder={t.guestRegistration.additionalGuestsPlaceholder}
               value={additionalGuests}
               onChange={(e) => setAdditionalGuests(e.target.value)}
@@ -199,8 +287,11 @@ export function GuestRegistrationForm({ locale, fieldDefs }: { locale: Locale; f
           </div>
 
           <div className="grid gap-1.5">
-            <Label htmlFor="purpose">{t.guestRegistration.purpose}</Label>
-            <Input id="purpose" required value={purpose} onChange={(e) => setPurpose(e.target.value)} />
+            <Label htmlFor="purpose">
+              {stdLabel("purpose")}
+              {stdRequired("purpose") && " *"}
+            </Label>
+            <Input id="purpose" required={stdRequired("purpose")} value={purpose} onChange={(e) => setPurpose(e.target.value)} />
           </div>
 
           {fieldDefs.map((field) => {

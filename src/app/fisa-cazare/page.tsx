@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mountain } from "lucide-react";
 import { GuestRegistrationForm } from "@/components/sections/guest-registration-form";
 import { getGuestRegistrationFieldDefs } from "@/lib/guest-registration-fields";
+import { getGuestRegistrationStandardFields } from "@/lib/guest-registration-standard-fields";
 import { getDictionary } from "@/lib/i18n";
 
 export const metadata = {
@@ -9,7 +10,10 @@ export const metadata = {
 };
 
 export default async function GuestRegistrationPage() {
-  const fieldDefs = await getGuestRegistrationFieldDefs();
+  const [fieldDefs, standardFields] = await Promise.all([
+    getGuestRegistrationFieldDefs(),
+    getGuestRegistrationStandardFields(),
+  ]);
   const t = getDictionary("ro");
 
   return (
@@ -28,7 +32,7 @@ export default async function GuestRegistrationPage() {
       <p className="mt-2 text-center text-sm text-muted-foreground">{t.guestRegistration.pageSubtitle}</p>
 
       <div className="mt-8">
-        <GuestRegistrationForm locale="ro" fieldDefs={fieldDefs} />
+        <GuestRegistrationForm locale="ro" fieldDefs={fieldDefs} standardFields={standardFields} />
       </div>
     </div>
   );
