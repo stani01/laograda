@@ -23,10 +23,10 @@ function escapeIcsText(text: string): string {
 }
 
 export async function GET(request: NextRequest) {
-  const expectedToken = process.env.ICAL_EXPORT_SECRET;
-  const token = request.nextUrl.searchParams.get("token");
+  const expectedToken = process.env.ICAL_EXPORT_SECRET?.trim();
+  const token = request.nextUrl.searchParams.get("token")?.trim();
 
-  if (!expectedToken || token !== expectedToken) {
+  if (!expectedToken || !token || token !== expectedToken) {
     return NextResponse.json({ error: "Neautorizat" }, { status: 401 });
   }
 
