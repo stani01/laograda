@@ -8,13 +8,25 @@
  * Supabase Auth for anything else that depends on Site URL) so invite/reset
  * emails land here instead of the public homepage.
  *
- * Supabase's browser client auto-detects the access token in the URL
- * (hash fragment for the implicit flow, `?code=` for PKCE) and fires
- * `onAuthStateChange` once the temporary session from the email link is
- * established — we wait for that before showing the "set a password" form.
+ * IMPORTANT: the default Supabase email templates use `{{ .ConfirmationURL
+ * }}`, which points to Supabase's own hosted `/auth/v1/verify` endpoint —
+ * that endpoint verifies (and burns) the one-time token on ANY plain HTTP
+ * GET, with no JavaScript required. Corporate email security scanners
+ * (Outlook Safe Links, etc.) frequently "pre-click" links like this to scan
+ * them, which silently invalidates the token before the real user ever
+ * clicks it — that's almost certainly why links were coming back
+ * "invalid/expired". Fix: edit the email templates (Authentication > Email
+ * Templates > "Invite user" / "Reset Password") to link directly to this
+ * page instead, passing the raw token:
+ *   {{ .SiteURL }}/admin/set-password?token_hash={{ .TokenHash }}&type=invite
+ * (use type=recovery in the "Reset Password" template). A GET request to
+ * OUR page has no side effects — the token is only ever consumed by the
+ * `verifyOtp` call below, which requires this page's JS to actually run, so
+ * link-scanners that don't execute JavaScript can no longer burn it.
  */
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import type { EmailOtpType } from "@supabase/supabase-js";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -22,8 +34,9 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
 
-export default function SetPasswordPage() {
+function SetPasswordForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [status, setStatus] = useState<"loading" | "ready" | "invalid">("loading");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -39,16 +52,29 @@ export default function SetPasswordPage() {
       return;
     }
 
+    const tokenHash = searchParams.get("token_hash");
+    const type = (searchParams.get("type") as EmailOtpType | null) ?? "invite";
+
+    // Preferred path: an explicit token_hash from a custom email template
+    // (see the file-level comment). Verifying it is what actually
+    // establishes the session — safe from link-scanner pre-fetching.
+    if (tokenHash) {
+      supabase.auth.verifyOtp({ token_hash: tokenHash, type }).then(({ error: verifyError }) => {
+        setStatus(verifyError ? "invalid" : "ready");
+      });
+      return;
+    }
+
+    // Fallback for the default Supabase email template: the session is
+    // established automatically from the URL hash by the client SDK.
     const { data: subscription } = supabase.auth.onAuthStateChange((_event, session) => {
       if (session) setStatus("ready");
     });
 
-    // In case the auth event already fired before this listener was attached.
     supabase.auth.getSession().then(({ data }) => {
       if (data.session) setStatus("ready");
     });
 
-    // Give the SDK a few seconds to parse the link's token before giving up.
     const timeout = setTimeout(() => {
       setStatus((current) => (current === "loading" ? "invalid" : current));
     }, 4000);
@@ -57,7 +83,7 @@ export default function SetPasswordPage() {
       subscription.subscription.unsubscribe();
       clearTimeout(timeout);
     };
-  }, []);
+  }, [searchParams]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -146,5 +172,19 @@ export default function SetPasswordPage() {
         </CardContent>
       </Card>
     </div>
+  );
+}
+
+export default function SetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex min-h-[80vh] items-center justify-center px-4">
+          <Loader2 className="size-6 animate-spin text-muted-foreground" aria-hidden />
+        </div>
+      }
+    >
+      <SetPasswordForm />
+    </Suspense>
   );
 }

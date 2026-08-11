@@ -61,7 +61,7 @@ export function GallerySection({
                 />
                 <DialogContent
                   showCloseButton
-                  className="max-h-[90vh] w-auto max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-4xl"
+                  className="max-h-[90vh] max-w-[calc(100%-2rem)] border-none bg-transparent p-0 shadow-none ring-0 sm:max-w-4xl"
                 >
                   <DialogClose
                     render={

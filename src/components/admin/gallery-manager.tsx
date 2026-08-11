@@ -8,7 +8,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent } from "@/components/ui/card";
-import { ArrowLeft, ArrowRight, Loader2, Trash2, Upload } from "lucide-react";
+import { GripVertical, Loader2, Trash2, Upload } from "lucide-react";
+import { cn } from "@/lib/utils";
 import type { GalleryImage } from "@/lib/site-content";
 
 export function GalleryManager({ initialImages }: { initialImages: GalleryImage[] }) {
@@ -18,7 +19,9 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
   const [alt, setAlt] = useState("");
   const [uploading, setUploading] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
-  const [reorderingId, setReorderingId] = useState<string | null>(null);
+  const [reordering, setReordering] = useState(false);
+  const [draggedId, setDraggedId] = useState<string | null>(null);
+  const [dragOverId, setDragOverId] = useState<string | null>(null);
 
   async function handleUpload(e: React.FormEvent) {
     e.preventDefault();
@@ -77,6 +80,7 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
   }
 
   async function persistOrder(order: GalleryImage[]) {
+    setReordering(true);
     try {
       const res = await fetch("/api/admin/gallery", {
         method: "PATCH",
@@ -90,19 +94,28 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
       router.refresh();
     } catch {
       toast.error("A apărut o eroare de rețea.");
+    } finally {
+      setReordering(false);
     }
   }
 
-  function moveImage(index: number, direction: -1 | 1) {
-    const targetIndex = index + direction;
-    if (targetIndex < 0 || targetIndex >= images.length) return;
+  function handleDrop(targetId: string) {
+    const sourceId = draggedId;
+    setDraggedId(null);
+    setDragOverId(null);
+
+    if (!sourceId || sourceId === targetId) return;
+
+    const fromIndex = images.findIndex((img) => img.id === sourceId);
+    const toIndex = images.findIndex((img) => img.id === targetId);
+    if (fromIndex === -1 || toIndex === -1) return;
 
     const reordered = [...images];
-    [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
+    const [moved] = reordered.splice(fromIndex, 1);
+    reordered.splice(toIndex, 0, moved);
 
-    setReorderingId(images[index].id);
     setImages(reordered);
-    persistOrder(reordered).finally(() => setReorderingId(null));
+    persistOrder(reordered);
   }
 
   return (
@@ -138,44 +151,50 @@ export function GalleryManager({ initialImages }: { initialImages: GalleryImage[
 
       {images.length > 1 && (
         <p className="text-xs text-muted-foreground">
-          Folosește săgețile de pe fiecare poză pentru a schimba ordinea în care apar pe site.
+          Trage o poză de mânerul din colțul din stânga sus pentru a schimba ordinea în care apar pe site.
         </p>
       )}
 
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {images.map((image, index) => (
-          <div key={image.id} className="group relative aspect-square overflow-hidden rounded-xl bg-muted">
+        {images.map((image) => (
+          <div
+            key={image.id}
+            draggable
+            onDragStart={() => setDraggedId(image.id)}
+            onDragOver={(e) => {
+              e.preventDefault();
+              if (dragOverId !== image.id) setDragOverId(image.id);
+            }}
+            onDragLeave={() => setDragOverId((current) => (current === image.id ? null : current))}
+            onDrop={(e) => {
+              e.preventDefault();
+              handleDrop(image.id);
+            }}
+            onDragEnd={() => {
+              setDraggedId(null);
+              setDragOverId(null);
+            }}
+            className={cn(
+              "group relative aspect-square overflow-hidden rounded-xl bg-muted ring-primary transition",
+              draggedId === image.id && "opacity-40",
+              dragOverId === image.id && draggedId !== image.id && "ring-2"
+            )}
+          >
             <Image src={image.url} alt={image.alt} fill className="object-cover" unoptimized />
 
-            <div className="absolute inset-x-0 top-0 flex items-center justify-between p-2 opacity-0 transition-opacity group-hover:opacity-100">
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon-sm"
-                disabled={index === 0 || reorderingId !== null}
-                onClick={() => moveImage(index, -1)}
-                aria-label="Mută mai devreme"
-              >
-                <ArrowLeft className="size-4" aria-hidden />
-              </Button>
-              <Button
-                type="button"
-                variant="secondary"
-                size="icon-sm"
-                disabled={index === images.length - 1 || reorderingId !== null}
-                onClick={() => moveImage(index, 1)}
-                aria-label="Mută mai târziu"
-              >
-                <ArrowRight className="size-4" aria-hidden />
-              </Button>
+            <div
+              className="absolute top-2 left-2 flex size-7 cursor-grab items-center justify-center rounded-md bg-black/50 text-white opacity-0 transition-opacity group-hover:opacity-100 active:cursor-grabbing"
+              aria-hidden="true"
+            >
+              <GripVertical className="size-4" />
             </div>
 
             <Button
               type="button"
               variant="destructive"
               size="icon-sm"
-              className="absolute bottom-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
-              disabled={deletingId === image.id}
+              className="absolute top-2 right-2 opacity-0 transition-opacity group-hover:opacity-100"
+              disabled={deletingId === image.id || reordering}
               onClick={() => handleDelete(image.id)}
             >
               {deletingId === image.id ? (
